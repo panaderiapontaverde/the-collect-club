@@ -246,11 +246,59 @@
   }
 
   @media (max-width: 640px) {
-    header { padding: 14px 16px; }
-    nav.tabs { padding: 0 16px; }
-    main { padding: 20px 16px 50px; }
-    table { font-size: 12px; }
+    header { padding: 12px 14px; gap: 10px; }
+    .brand { gap: 8px; min-width: 0; }
+    .brand .logo { width: 30px; height: 30px; font-size: 13px; flex-shrink: 0; }
+    .brand h1 { font-size: 15px; }
+    .brand span.sub { display: none; }
+    .theme-toggle { padding: 7px 10px; font-size: 12px; flex-shrink: 0; white-space: nowrap; }
+    nav.tabs { padding: 0 14px; }
+    nav.tabs button { padding: 10px 10px; font-size: 13px; }
+    main { padding: 18px 14px 50px; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .kpi { padding: 12px 14px; }
+    .kpi .value { font-size: 17px; }
+    h2.section-title { font-size: 14px; }
+    .subsection-title { font-size: 13px; margin: 22px 0 4px; }
     .bar-row { grid-template-columns: 90px 1fr; }
+
+    /* Responsive tables -> stacked cards on small screens */
+    table.stack-mobile { font-size: 12.5px; }
+    table.stack-mobile thead { display: none; }
+    table.stack-mobile, table.stack-mobile tbody, table.stack-mobile tr, table.stack-mobile td {
+      display: block;
+      width: 100%;
+    }
+    table.stack-mobile tr {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px 12px;
+      margin-bottom: 12px;
+      background: var(--surface-1);
+    }
+    table.stack-mobile tbody tr:last-child { margin-bottom: 0; }
+    table.stack-mobile td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      text-align: right;
+      white-space: normal;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--gridline);
+    }
+    table.stack-mobile td:last-child { border-bottom: none; }
+    table.stack-mobile td::before {
+      content: attr(data-label);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: var(--text-muted);
+      text-align: left;
+      flex-shrink: 0;
+    }
+    .opp-table-wrap, #patrimonioTable, #financeiroTable { overflow-x: visible; }
   }
 </style>
 </head>
@@ -301,7 +349,7 @@
     <h2 class="section-title">Financeiro — custo e margem por relógio</h2>
     <p class="section-note">Fonte: aba Financeiro da planilha (Google Sheets). Atualize a planilha e este painel será atualizado na próxima sincronização.</p>
     <div class="card" style="overflow-x:auto;">
-      <table id="financeiroTable">
+      <table id="financeiroTable" class="stack-mobile">
         <thead>
           <tr>
             <th>Data Compra</th>
@@ -327,7 +375,7 @@
     <p class="section-note">Fonte: aba Patrimônio da planilha. Caixa disponível + valor em estoque (a preço de custo), do aporte inicial até hoje.</p>
     <div class="kpi-grid" id="patrimonioKpiGrid"></div>
     <div class="card" style="overflow-x:auto;">
-      <table id="patrimonioTable">
+      <table id="patrimonioTable" class="stack-mobile">
         <thead>
           <tr>
             <th>Data</th>
@@ -358,7 +406,7 @@
     <h3 class="subsection-title">🎯 Painel de Oportunidades</h3>
     <p class="subsection-note">Relógios encontrados e avaliados contra o perfil de compra, com custo final e margem estimados quando aplicável.</p>
     <div class="card opp-table-wrap">
-      <table id="oportunidadesTable">
+      <table id="oportunidadesTable" class="stack-mobile">
         <thead>
           <tr>
             <th>Relógio</th>
@@ -378,7 +426,7 @@
     <h3 class="subsection-title">👁️ Relógios Monitorados</h3>
     <p class="subsection-note">Watchlist de modelos de interesse com preço-alvo de compra, para agir assim que aparecer uma oportunidade real.</p>
     <div class="card opp-table-wrap">
-      <table id="monitoradosTable">
+      <table id="monitoradosTable" class="stack-mobile">
         <thead>
           <tr>
             <th>Marca / Modelo</th>
@@ -524,16 +572,16 @@
       const statusClass = r.status === "Vendido" ? "status-vendido" : "status-transito";
       return `
         <tr>
-          <td>${r.dataCompra}</td>
-          <td>${r.modelo}</td>
-          <td>${r.moeda}</td>
-          <td>${r.cambio.toFixed(4).replace(".", ",")}</td>
-          <td>${fmtBRL(r.custoTotal)}</td>
-          <td>${r.precoVenda ? fmtBRL(r.precoVenda) : "—"}</td>
-          <td><span class="status-pill ${statusClass}">${r.status}</span></td>
-          <td>${margemR !== null ? fmtBRL(margemR) : "—"}</td>
-          <td>${margemPct !== null ? margemPct.toFixed(1).replace(".", ",") + "%" : "—"}</td>
-          <td>${r.dataVenda || "—"}</td>
+          <td data-label="Data Compra">${r.dataCompra}</td>
+          <td data-label="Relógio">${r.modelo}</td>
+          <td data-label="Moeda">${r.moeda}</td>
+          <td data-label="Câmbio">${r.cambio.toFixed(4).replace(".", ",")}</td>
+          <td data-label="Custo Total">${fmtBRL(r.custoTotal)}</td>
+          <td data-label="Preço Venda">${r.precoVenda ? fmtBRL(r.precoVenda) : "—"}</td>
+          <td data-label="Status"><span class="status-pill ${statusClass}">${r.status}</span></td>
+          <td data-label="Margem R$">${margemR !== null ? fmtBRL(margemR) : "—"}</td>
+          <td data-label="Margem %">${margemPct !== null ? margemPct.toFixed(1).replace(".", ",") + "%" : "—"}</td>
+          <td data-label="Data Venda">${r.dataVenda || "—"}</td>
         </tr>
       `;
     }).join("");
@@ -616,14 +664,14 @@
     if (!tbody) return;
     tbody.innerHTML = oportunidades.map(o => `
       <tr>
-        <td>${o.relogio}</td>
-        <td>${o.fonte}</td>
-        <td>${o.valorAnunciado}</td>
-        <td>${o.custoFinal !== null ? fmtBRL(o.custoFinal) : "—"}</td>
-        <td>${o.potencialRevenda !== null ? fmtBRL(o.potencialRevenda) : "—"}</td>
-        <td>${o.margemR !== null ? `<span class="opp-margem">${fmtBRL(o.margemR)} (${o.margemPct.toFixed(1).replace(".", ",")}%)</span>` : "—"}</td>
-        <td><span class="opp-status ${o.statusClass}">${o.status}</span></td>
-        <td>${o.link ? `<a class="opp-link" href="${o.link}" target="_blank" rel="noopener">ver anúncio ↗</a>` : "—"}</td>
+        <td data-label="Relógio">${o.relogio}</td>
+        <td data-label="Fonte">${o.fonte}</td>
+        <td data-label="Valor Anunciado">${o.valorAnunciado}</td>
+        <td data-label="Custo Final Est.">${o.custoFinal !== null ? fmtBRL(o.custoFinal) : "—"}</td>
+        <td data-label="Potencial Revenda">${o.potencialRevenda !== null ? fmtBRL(o.potencialRevenda) : "—"}</td>
+        <td data-label="Margem Est.">${o.margemR !== null ? `<span class="opp-margem">${fmtBRL(o.margemR)} (${o.margemPct.toFixed(1).replace(".", ",")}%)</span>` : "—"}</td>
+        <td data-label="Status"><span class="opp-status ${o.statusClass}">${o.status}</span></td>
+        <td data-label="Link">${o.link ? `<a class="opp-link" href="${o.link}" target="_blank" rel="noopener">ver anúncio ↗</a>` : "—"}</td>
       </tr>
     `).join("");
   }
@@ -633,11 +681,11 @@
     if (!tbody) return;
     tbody.innerHTML = monitorados.map(m => `
       <tr>
-        <td>${m.marcaModelo}</td>
-        <td>${m.prioridade}</td>
-        <td>${m.precoAlvo}</td>
-        <td><span class="opp-status ${m.statusClass}">${m.status}</span></td>
-        <td style="white-space:normal; min-width:260px;">${m.obs}</td>
+        <td data-label="Marca / Modelo">${m.marcaModelo}</td>
+        <td data-label="Prioridade">${m.prioridade}</td>
+        <td data-label="Preço-Alvo">${m.precoAlvo}</td>
+        <td data-label="Status"><span class="opp-status ${m.statusClass}">${m.status}</span></td>
+        <td data-label="Observações" style="white-space:normal; min-width:260px;">${m.obs}</td>
       </tr>
     `).join("");
   }
@@ -683,17 +731,17 @@
       return;
     }
     card.innerHTML = `
-      <table>
+      <table class="stack-mobile">
         <thead>
           <tr><th>Relógio</th><th>Data Compra</th><th>Custo Total (parcial)</th><th>Status</th></tr>
         </thead>
         <tbody>
           ${emEstoque.map(r => `
             <tr>
-              <td>${r.modelo}</td>
-              <td>${r.dataCompra}</td>
-              <td>${fmtBRL(r.custoTotal)}</td>
-              <td><span class="status-pill status-transito">${r.status}</span></td>
+              <td data-label="Relógio">${r.modelo}</td>
+              <td data-label="Data Compra">${r.dataCompra}</td>
+              <td data-label="Custo Total (parcial)">${fmtBRL(r.custoTotal)}</td>
+              <td data-label="Status"><span class="status-pill status-transito">${r.status}</span></td>
             </tr>
           `).join("")}
         </tbody>
@@ -727,12 +775,12 @@
       const varPct = inicio ? (varR / inicio) * 100 : 0;
       return `
         <tr>
-          <td>${p.data}</td>
-          <td>${p.evento}</td>
-          <td>${fmtBRL(p.caixa)}</td>
-          <td>${fmtBRL(p.estoque)}</td>
-          <td>${fmtBRL(p.total)}</td>
-          <td>${fmtBRL(varR)} (${varPct.toFixed(2).replace(".", ",")}%)</td>
+          <td data-label="Data">${p.data}</td>
+          <td data-label="Evento" style="white-space:normal;">${p.evento}</td>
+          <td data-label="Caixa Disponível">${fmtBRL(p.caixa)}</td>
+          <td data-label="Valor em Estoque">${fmtBRL(p.estoque)}</td>
+          <td data-label="Patrimônio Total">${fmtBRL(p.total)}</td>
+          <td data-label="Variação vs. Início">${fmtBRL(varR)} (${varPct.toFixed(2).replace(".", ",")}%)</td>
         </tr>
       `;
     }).join("");

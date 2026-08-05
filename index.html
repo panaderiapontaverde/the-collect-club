@@ -375,11 +375,11 @@
 
   // ---- DATA (snapshot manual da aba Patrimonio) ----
   const patrimonio = [
-    { data: "15/06/2026", evento: "Aporte Inicial", caixa: 3104.32, estoque: 0, total: 3104.32 },
-    { data: "15/06/2026", evento: "Compra dos Relógios (Seiko + TAG Heuer + Polimento)", caixa: 0, estoque: 3104.32, total: 3104.32 },
-    { data: "05/08/2026", evento: "Após Vendas Realizadas (Seiko + TAG Heuer)", caixa: 4650.00, estoque: 0, total: 4650.00 },
-    { data: "05/08/2026", evento: "Compra do 3º Relógio (TAG Heuer Aquaracer — em trânsito)", caixa: 307.70, estoque: 4342.30, total: 4650.00 },
-    { data: "05/08/2026", evento: "Aporte / Correção de Caixa", caixa: 851.33, estoque: 4342.30, total: 5193.63 },
+    { data: "15/06/2026", evento: "Aporte Inicial", caixa: 3104.32, estoque: 0, total: 3104.32, aporte: 3104.32 },
+    { data: "15/06/2026", evento: "Compra dos Relógios (Seiko + TAG Heuer + Polimento)", caixa: 0, estoque: 3104.32, total: 3104.32, aporte: 0 },
+    { data: "05/08/2026", evento: "Após Vendas Realizadas (Seiko + TAG Heuer)", caixa: 4650.00, estoque: 0, total: 4650.00, aporte: 0 },
+    { data: "05/08/2026", evento: "Compra do 3º Relógio (TAG Heuer Aquaracer — em trânsito)", caixa: 307.70, estoque: 4342.30, total: 4650.00, aporte: 0 },
+    { data: "05/08/2026", evento: "Aporte / Correção de Caixa", caixa: 851.33, estoque: 4342.30, total: 5193.63, aporte: 543.63 },
   ];
 
   function fmtBRL(v) {
@@ -388,7 +388,9 @@
 
   function renderKPIs() {
     const vendidos = relogios.filter(r => r.status === "Vendido");
-    const totalInvestido = relogios.reduce((s, r) => s + r.custoTotal, 0);
+    // Total Investido = dinheiro externo que entrou no negócio (aportes), não o custo dos relógios.
+    const totalInvestido = patrimonio.reduce((s, p) => s + (p.aporte || 0), 0);
+    const custoAquisicao = relogios.reduce((s, r) => s + r.custoTotal, 0);
     const totalVendido = vendidos.reduce((s, r) => s + r.precoVenda, 0);
     const lucroTotal = vendidos.reduce((s, r) => s + (r.precoVenda - r.custoTotal), 0);
     const margemMedia = vendidos.length
@@ -397,7 +399,8 @@
     const ticketMedio = vendidos.length ? totalVendido / vendidos.length : 0;
 
     const kpis = [
-      { label: "Total Investido", value: fmtBRL(totalInvestido) },
+      { label: "Total Investido (Aportes)", value: fmtBRL(totalInvestido) },
+      { label: "Custo em Aquisição de Relógios", value: fmtBRL(custoAquisicao) },
       { label: "Total Vendido (Receita)", value: fmtBRL(totalVendido) },
       { label: "Lucro Líquido", value: fmtBRL(lucroTotal), good: true },
       { label: "Margem Média", value: margemMedia.toFixed(1).replace(".", ",") + "%", good: true },

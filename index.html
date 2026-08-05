@@ -173,6 +173,8 @@
   }
   .status-vendido { background: rgba(12,163,12,0.14); color: var(--success-text); }
   .status-estoque { background: rgba(137,135,129,0.18); color: var(--text-secondary); }
+  .status-transito { background: rgba(250,178,25,0.18); color: #9a6b00; }
+  :root[data-theme="dark"] .status-transito { color: #fab219; }
 
   .empty-state {
     display: flex;
@@ -228,6 +230,7 @@
 <nav class="tabs" id="tabNav">
   <button data-tab="visao" class="active">Visão Geral</button>
   <button data-tab="financeiro">Financeiro</button>
+  <button data-tab="patrimonio">Patrimônio</button>
   <button data-tab="estoque">Estoque</button>
   <button data-tab="pesquisa">Pesquisa de Mercado</button>
   <button data-tab="vendas">Vendas</button>
@@ -278,16 +281,33 @@
     </div>
   </section>
 
+  <!-- PATRIMÔNIO -->
+  <section class="panel" id="panel-patrimonio">
+    <h2 class="section-title">Patrimônio — evolução do caixa + estoque</h2>
+    <p class="section-note">Fonte: aba Patrimônio da planilha. Caixa disponível + valor em estoque (a preço de custo), do aporte inicial até hoje.</p>
+    <div class="kpi-grid" id="patrimonioKpiGrid"></div>
+    <div class="card" style="overflow-x:auto;">
+      <table id="patrimonioTable">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Evento</th>
+            <th>Caixa Disponível</th>
+            <th>Valor em Estoque</th>
+            <th>Patrimônio Total</th>
+            <th>Variação vs. Início</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
   <!-- ESTOQUE -->
   <section class="panel" id="panel-estoque">
     <h2 class="section-title">Estoque atual</h2>
-    <div class="card">
-      <div class="empty-state" id="estoqueEmpty">
-        <div class="icon">📦</div>
-        <h3>Nenhum relógio em estoque no momento</h3>
-        <p>As duas primeiras peças (Seiko 5 Field SBSA111 e TAG Heuer WK1110) já foram vendidas. Assim que uma nova peça chegar do Japão, ela aparece aqui automaticamente.</p>
-      </div>
-    </div>
+    <p class="section-note">Peças compradas que ainda não foram vendidas (inclui as que estão a caminho do Japão).</p>
+    <div class="card" id="estoqueCard"></div>
   </section>
 
   <!-- PESQUISA DE MERCADO -->
@@ -341,6 +361,25 @@
       status: "Vendido",
       dataVenda: "03/08/2026",
     },
+    {
+      dataCompra: "05/08/2026",
+      modelo: "TAG Heuer Aquaracer Chronograph CAN1010.BA0821",
+      moeda: "JPY",
+      cambio: 0.0327,
+      custoTotal: 4342.30,
+      precoVenda: null,
+      status: "Comprado - Aguardando Chegada",
+      dataVenda: null,
+    },
+  ];
+
+  // ---- DATA (snapshot manual da aba Patrimonio) ----
+  const patrimonio = [
+    { data: "15/06/2026", evento: "Aporte Inicial", caixa: 3104.32, estoque: 0, total: 3104.32 },
+    { data: "15/06/2026", evento: "Compra dos Relógios (Seiko + TAG Heuer + Polimento)", caixa: 0, estoque: 3104.32, total: 3104.32 },
+    { data: "05/08/2026", evento: "Após Vendas Realizadas (Seiko + TAG Heuer)", caixa: 4650.00, estoque: 0, total: 4650.00 },
+    { data: "05/08/2026", evento: "Compra do 3º Relógio (TAG Heuer Aquaracer — em trânsito)", caixa: 307.70, estoque: 4342.30, total: 4650.00 },
+    { data: "05/08/2026", evento: "Aporte / Correção de Caixa", caixa: 851.33, estoque: 4342.30, total: 5193.63 },
   ];
 
   function fmtBRL(v) {
@@ -376,9 +415,10 @@
   }
 
   function renderBars() {
-    const max = Math.max(...relogios.map(r => Math.max(r.custoTotal, r.precoVenda)));
+    const vendidos = relogios.filter(r => r.status === "Vendido");
+    const max = Math.max(...vendidos.map(r => Math.max(r.custoTotal, r.precoVenda)));
     const wrap = document.getElementById("barsWrap");
-    wrap.innerHTML = relogios.map(r => {
+    wrap.innerHTML = vendidos.map(r => {
       const custoPct = (r.custoTotal / max) * 100;
       const vendaPct = (r.precoVenda / max) * 100;
       return `
@@ -400,7 +440,7 @@
     tbody.innerHTML = relogios.map(r => {
       const margemR = r.status === "Vendido" ? r.precoVenda - r.custoTotal : null;
       const margemPct = margemR !== null ? (margemR / r.custoTotal) * 100 : null;
-      const statusClass = r.status === "Vendido" ? "status-vendido" : "status-estoque";
+      const statusClass = r.status === "Vendido" ? "status-vendido" : "status-transito";
       return `
         <tr>
           <td>${r.dataCompra}</td>
@@ -418,9 +458,80 @@
     }).join("");
   }
 
+  function renderEstoque() {
+    const emEstoque = relogios.filter(r => r.status !== "Vendido");
+    const card = document.getElementById("estoqueCard");
+    if (!emEstoque.length) {
+      card.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">📦</div>
+          <h3>Nenhum relógio em estoque no momento</h3>
+          <p>Todas as peças já foram vendidas. Assim que uma nova peça chegar do Japão, ela aparece aqui automaticamente.</p>
+        </div>
+      `;
+      return;
+    }
+    card.innerHTML = `
+      <table>
+        <thead>
+          <tr><th>Relógio</th><th>Data Compra</th><th>Custo Total (parcial)</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          ${emEstoque.map(r => `
+            <tr>
+              <td>${r.modelo}</td>
+              <td>${r.dataCompra}</td>
+              <td>${fmtBRL(r.custoTotal)}</td>
+              <td><span class="status-pill status-transito">${r.status}</span></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+  }
+
+  function renderPatrimonio() {
+    const inicio = patrimonio[0].total;
+    const atual = patrimonio[patrimonio.length - 1];
+    const variacaoR = atual.total - inicio;
+    const variacaoPct = inicio ? (variacaoR / inicio) * 100 : 0;
+
+    const kpis = [
+      { label: "Patrimônio Total Atual", value: fmtBRL(atual.total) },
+      { label: "Caixa Disponível", value: fmtBRL(atual.caixa) },
+      { label: "Valor em Estoque", value: fmtBRL(atual.estoque) },
+      { label: "Variação vs. Início", value: fmtBRL(variacaoR), good: variacaoR >= 0 },
+      { label: "Variação %", value: variacaoPct.toFixed(2).replace(".", ",") + "%", good: variacaoPct >= 0 },
+    ];
+    document.getElementById("patrimonioKpiGrid").innerHTML = kpis.map(k => `
+      <div class="kpi">
+        <div class="label">${k.label}</div>
+        <div class="value ${k.good ? "delta good" : ""}">${k.value}</div>
+      </div>
+    `).join("");
+
+    const tbody = document.querySelector("#patrimonioTable tbody");
+    tbody.innerHTML = patrimonio.map(p => {
+      const varR = p.total - inicio;
+      const varPct = inicio ? (varR / inicio) * 100 : 0;
+      return `
+        <tr>
+          <td>${p.data}</td>
+          <td>${p.evento}</td>
+          <td>${fmtBRL(p.caixa)}</td>
+          <td>${fmtBRL(p.estoque)}</td>
+          <td>${fmtBRL(p.total)}</td>
+          <td>${fmtBRL(varR)} (${varPct.toFixed(2).replace(".", ",")}%)</td>
+        </tr>
+      `;
+    }).join("");
+  }
+
   renderKPIs();
   renderBars();
   renderTable();
+  renderEstoque();
+  renderPatrimonio();
 
   // ---- TABS ----
   document.getElementById("tabNav").addEventListener("click", (e) => {

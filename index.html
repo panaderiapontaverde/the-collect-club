@@ -176,6 +176,33 @@
   .status-transito { background: rgba(250,178,25,0.18); color: #9a6b00; }
   :root[data-theme="dark"] .status-transito { color: #fab219; }
 
+  .pesquisa-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .pesquisa-card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .pesquisa-card .head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .pesquisa-card .icon { font-size: 17px; }
+  .pesquisa-card h3 { font-size: 14px; margin: 0; font-weight: 600; color: var(--text-primary); }
+  .pesquisa-card p { font-size: 12.5px; color: var(--text-secondary); margin: 0 0 10px; line-height: 1.5; }
+  .pesquisa-card .fields { font-size: 11.5px; color: var(--text-muted); line-height: 1.6; }
+  .pesquisa-card .badge {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(137,135,129,0.18);
+    color: var(--text-secondary);
+    margin-left: auto;
+  }
+
   .empty-state {
     display: flex;
     flex-direction: column;
@@ -313,13 +340,8 @@
   <!-- PESQUISA DE MERCADO -->
   <section class="panel" id="panel-pesquisa">
     <h2 class="section-title">Pesquisa de Mercado</h2>
-    <div class="card">
-      <div class="empty-state">
-        <div class="icon">🔍</div>
-        <h3>Ainda não há dados de pesquisa cadastrados</h3>
-        <p>Aqui vão entrar os preços de referência de mercado (OLX, lojas especializadas, grupos de colecionadores) pra te ajudar a precificar cada peça.</p>
-      </div>
-    </div>
+    <p class="section-note">Radar de oportunidades e inteligência de mercado — módulo estruturado na planilha (aba Pesquisa_Mercado), ainda sem coleta automática de dados. Fontes previstas: 2nd Street Japão, OLX Brasil e Instagram.</p>
+    <div class="pesquisa-grid" id="pesquisaGrid"></div>
   </section>
 
   <!-- VENDAS -->
@@ -464,6 +486,33 @@
     }).join("");
   }
 
+  // ---- DATA (arquitetura da aba Pesquisa_Mercado — estrutura pronta, sem coleta automática ainda) ----
+  const pesquisaSecoes = [
+    { icon: "🎯", nome: "Oportunidades", desc: "Relógios encontrados (2nd Street, OLX ou Instagram) que batem com o perfil de compra — com custo final e margem estimados.", campos: "Fonte · Marca/Modelo/Ref. · Valor · Estado · Caixa/Certificado/Acessórios · Custo final estimado · Margem estimada · Status" },
+    { icon: "🇧🇷", nome: "Mercado Brasileiro", desc: "Inteligência de preços e oferta na OLX: quanto se pratica, quantos anúncios existem, concorrência por modelo.", campos: "Modelo · Qtd. anúncios · Preço mín/médio/máx · Faixa de negociação · Concorrência" },
+    { icon: "🇯🇵", nome: "Mercado Japonês", desc: "Inteligência de preços no 2nd Street: faixa de valores praticados por modelo, em ienes e convertido.", campos: "Modelo · Qtd. anúncios · Preço mín/médio/máx (¥) · Câmbio · Preço médio estimado (R$)" },
+    { icon: "🔥", nome: "Modelos em Alta", desc: "Modelos que estão aparecendo com mais frequência ou ganhando destaque no Instagram, OLX ou 2nd Street.", campos: "Marca/Modelo · Motivo da alta · Fonte · Frequência de aparição · Faixa de preço" },
+    { icon: "📈", nome: "Histórico de Preços", desc: "Série temporal de preços observados por modelo, para acompanhar a evolução ao longo do tempo.", campos: "Data · Modelo · Mercado (BR/JP) · Preço observado · Fonte" },
+    { icon: "🕵️", nome: "Concorrentes", desc: "Lojas, revendedores e colecionadores monitorados no Instagram e na OLX — o que vendem e a que preço.", campos: "Perfil · Tipo · Plataforma · Modelos que costuma vender · Faixa de preço · Frequência de postagem" },
+    { icon: "👁️", nome: "Relógios Monitorados", desc: "Watchlist de modelos específicos de interesse, com preço-alvo de compra, para agir assim que aparecer uma oportunidade.", campos: "Marca/Modelo/Ref. · Prioridade · Preço-alvo (¥/R$) · Preço médio de mercado · Status" },
+  ];
+
+  function renderPesquisa() {
+    const grid = document.getElementById("pesquisaGrid");
+    if (!grid) return;
+    grid.innerHTML = pesquisaSecoes.map(s => `
+      <div class="pesquisa-card">
+        <div class="head">
+          <span class="icon">${s.icon}</span>
+          <h3>${s.nome}</h3>
+          <span class="badge">estrutura pronta</span>
+        </div>
+        <p>${s.desc}</p>
+        <div class="fields">${s.campos}</div>
+      </div>
+    `).join("");
+  }
+
   function renderEstoque() {
     const emEstoque = relogios.filter(r => r.status !== "Vendido");
     const card = document.getElementById("estoqueCard");
@@ -538,6 +587,7 @@
   renderTable();
   renderEstoque();
   renderPatrimonio();
+  renderPesquisa();
 
   // ---- TABS ----
   document.getElementById("tabNav").addEventListener("click", (e) => {

@@ -397,8 +397,11 @@
       ? (vendidos.reduce((s, r) => s + (r.precoVenda - r.custoTotal) / r.custoTotal, 0) / vendidos.length) * 100
       : 0;
     const ticketMedio = vendidos.length ? totalVendido / vendidos.length : 0;
+    const patrimonioAtual = patrimonio[patrimonio.length - 1];
 
     const kpis = [
+      { label: "Patrimônio Total", value: fmtBRL(patrimonioAtual.total) },
+      { label: "Caixa Disponível", value: fmtBRL(patrimonioAtual.caixa) },
       { label: "Total Investido (Aportes)", value: fmtBRL(totalInvestido) },
       { label: "Custo em Aquisição de Relógios", value: fmtBRL(custoAquisicao) },
       { label: "Total Vendido (Receita)", value: fmtBRL(totalVendido) },

@@ -203,6 +203,19 @@
     margin-left: auto;
   }
 
+  .opp-table-wrap { overflow-x: auto; }
+  .opp-status { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+  .opp-status.validada { background: rgba(12,163,12,0.14); color: var(--success-text); }
+  .opp-status.candidato { background: rgba(250,178,25,0.18); color: #9a6b00; }
+  :root[data-theme="dark"] .opp-status.candidato { color: #fab219; }
+  .opp-status.descartada { background: rgba(208,59,59,0.14); color: #d03b3b; }
+  .opp-status.monitorando { background: rgba(137,135,129,0.18); color: var(--text-secondary); }
+  .opp-margem { font-weight: 700; color: var(--success-text); }
+  .opp-link { color: var(--series-1); text-decoration: none; font-size: 12px; }
+  .opp-link:hover { text-decoration: underline; }
+  .subsection-title { font-size: 13.5px; font-weight: 600; margin: 28px 0 4px; color: var(--text-primary); }
+  .subsection-note { font-size: 12.5px; color: var(--text-muted); margin: 0 0 12px; }
+
   .empty-state {
     display: flex;
     flex-direction: column;
@@ -340,7 +353,47 @@
   <!-- PESQUISA DE MERCADO -->
   <section class="panel" id="panel-pesquisa">
     <h2 class="section-title">Pesquisa de Mercado</h2>
-    <p class="section-note">Radar de oportunidades e inteligência de mercado — módulo estruturado na planilha (aba Pesquisa_Mercado), ainda sem coleta automática de dados. Fontes previstas: 2nd Street Japão, OLX Brasil e Instagram.</p>
+    <p class="section-note">Radar de oportunidades e inteligência de mercado. Fontes: 2nd Street Japão, OLX Brasil e Instagram. Levantamento ainda manual — sem coleta automática/contínua por enquanto.</p>
+
+    <h3 class="subsection-title">🎯 Painel de Oportunidades</h3>
+    <p class="subsection-note">Relógios encontrados e avaliados contra o perfil de compra, com custo final e margem estimados quando aplicável.</p>
+    <div class="card opp-table-wrap">
+      <table id="oportunidadesTable">
+        <thead>
+          <tr>
+            <th>Relógio</th>
+            <th>Fonte</th>
+            <th>Valor Anunciado</th>
+            <th>Custo Final Est.</th>
+            <th>Potencial Revenda</th>
+            <th>Margem Est.</th>
+            <th>Status</th>
+            <th>Link</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection-title">👁️ Relógios Monitorados</h3>
+    <p class="subsection-note">Watchlist de modelos de interesse com preço-alvo de compra, para agir assim que aparecer uma oportunidade real.</p>
+    <div class="card opp-table-wrap">
+      <table id="monitoradosTable">
+        <thead>
+          <tr>
+            <th>Marca / Modelo</th>
+            <th>Prioridade</th>
+            <th>Preço-Alvo de Compra</th>
+            <th>Status</th>
+            <th>Observações</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <h3 class="subsection-title">🗂️ Arquitetura do Módulo</h3>
+    <p class="subsection-note">Estrutura completa preparada na planilha (aba Pesquisa_Mercado) para as próximas etapas.</p>
     <div class="pesquisa-grid" id="pesquisaGrid"></div>
   </section>
 
@@ -486,6 +539,109 @@
     }).join("");
   }
 
+  // ---- DATA (snapshot manual da aba Pesquisa_Mercado > Oportunidades) ----
+  const oportunidades = [
+    {
+      relogio: "TAG Heuer Professional 200 Meters (WG1113-0)",
+      fonte: "2nd Street Japão",
+      valorAnunciado: "¥43.890 (R$1.435,20)",
+      custoFinal: 2137.94,
+      potencialRevenda: 4300.00,
+      margemR: 2162.06,
+      margemPct: 101.13,
+      status: "Oportunidade Validada",
+      statusClass: "validada",
+      link: "https://www.2ndstreet.jp/goods/detail/goodsId/2347920394900/shopsId/31933",
+    },
+    {
+      relogio: "TAG Heuer Aquaracer (WBD1311)",
+      fonte: "2nd Street Japão",
+      valorAnunciado: "¥76.890 (R$2.514,30)",
+      custoFinal: null,
+      potencialRevenda: null,
+      margemR: null,
+      margemPct: null,
+      status: "Descartado - Fora do Perfil",
+      statusClass: "descartada",
+      link: "https://www.2ndstreet.jp/goods/detail/goodsId/2332591892015/shopsId/31894",
+    },
+  ];
+
+  // ---- DATA (snapshot manual da aba Pesquisa_Mercado > Relógios Monitorados) ----
+  const monitorados = [
+    {
+      marcaModelo: "TAG Heuer Professional 200 Meters (WG1113-0)",
+      prioridade: "Alta",
+      precoAlvo: "—",
+      status: "Oportunidade Identificada",
+      statusClass: "validada",
+      obs: "Ver Painel de Oportunidades acima — margem já validada com dados do OLX.",
+    },
+    {
+      marcaModelo: "TAG Heuer Aquaracer",
+      prioridade: "Alta",
+      precoAlvo: "—",
+      status: "Monitorando",
+      statusClass: "monitorando",
+      obs: "Perfil: caixa ~38mm, pulseira ~18,5cm. Anúncios encontrados até agora tinham pulso de 14-14,5cm (fora do perfil).",
+    },
+    {
+      marcaModelo: "TAG Heuer Series 2000",
+      prioridade: "Média",
+      precoAlvo: "—",
+      status: "Monitorando",
+      statusClass: "monitorando",
+      obs: "Perfil: caixa ~38mm, pulseira ~18,5cm. Nenhum anúncio encontrado no 2nd Street ainda.",
+    },
+    {
+      marcaModelo: "TAG Heuer Formula 1",
+      prioridade: "Média",
+      precoAlvo: "—",
+      status: "Monitorando",
+      statusClass: "monitorando",
+      obs: "Perfil: caixa ~38mm, pulseira ~18,5cm. Único anúncio encontrado era modelo feminino (32mm, cravejado) - fora do perfil.",
+    },
+    {
+      marcaModelo: "Omega MoonSwatch (Bioceramic Moonphase)",
+      prioridade: "Alta",
+      precoAlvo: "R$1.500 - R$2.200",
+      status: "Monitorando",
+      statusClass: "monitorando",
+      obs: "Compra via OLX. Regra: anúncio abaixo de R$1.500 é muito provavelmente réplica - descartar. Genuínos observados: R$3.200-3.500.",
+    },
+  ];
+
+  function renderOportunidades() {
+    const tbody = document.querySelector("#oportunidadesTable tbody");
+    if (!tbody) return;
+    tbody.innerHTML = oportunidades.map(o => `
+      <tr>
+        <td>${o.relogio}</td>
+        <td>${o.fonte}</td>
+        <td>${o.valorAnunciado}</td>
+        <td>${o.custoFinal !== null ? fmtBRL(o.custoFinal) : "—"}</td>
+        <td>${o.potencialRevenda !== null ? fmtBRL(o.potencialRevenda) : "—"}</td>
+        <td>${o.margemR !== null ? `<span class="opp-margem">${fmtBRL(o.margemR)} (${o.margemPct.toFixed(1).replace(".", ",")}%)</span>` : "—"}</td>
+        <td><span class="opp-status ${o.statusClass}">${o.status}</span></td>
+        <td>${o.link ? `<a class="opp-link" href="${o.link}" target="_blank" rel="noopener">ver anúncio ↗</a>` : "—"}</td>
+      </tr>
+    `).join("");
+  }
+
+  function renderMonitorados() {
+    const tbody = document.querySelector("#monitoradosTable tbody");
+    if (!tbody) return;
+    tbody.innerHTML = monitorados.map(m => `
+      <tr>
+        <td>${m.marcaModelo}</td>
+        <td>${m.prioridade}</td>
+        <td>${m.precoAlvo}</td>
+        <td><span class="opp-status ${m.statusClass}">${m.status}</span></td>
+        <td style="white-space:normal; min-width:260px;">${m.obs}</td>
+      </tr>
+    `).join("");
+  }
+
   // ---- DATA (arquitetura da aba Pesquisa_Mercado — estrutura pronta, sem coleta automática ainda) ----
   const pesquisaSecoes = [
     { icon: "🎯", nome: "Oportunidades", desc: "Relógios encontrados (2nd Street, OLX ou Instagram) que batem com o perfil de compra — com custo final e margem estimados.", campos: "Fonte · Marca/Modelo/Ref. · Valor · Estado · Caixa/Certificado/Acessórios · Custo final estimado · Margem estimada · Status" },
@@ -588,6 +744,8 @@
   renderEstoque();
   renderPatrimonio();
   renderPesquisa();
+  renderOportunidades();
+  renderMonitorados();
 
   // ---- TABS ----
   document.getElementById("tabNav").addEventListener("click", (e) => {

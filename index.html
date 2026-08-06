@@ -327,6 +327,40 @@
   .market-card .mk-prices .mp-item .mp-value { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-primary); }
   .market-card .mk-note { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
 
+  .pipeline-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .pipeline-flow .pl-stage {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    min-width: 130px;
+    flex: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    justify-content: center;
+  }
+  .pipeline-flow .pl-stage .pl-icon { font-size: 18px; }
+  .pipeline-flow .pl-stage .pl-count { font-size: 22px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+  .pipeline-flow .pl-stage .pl-label { font-size: 11.5px; color: var(--text-muted); line-height: 1.3; }
+  .pipeline-flow .pl-arrow { display: flex; align-items: center; color: var(--text-muted); font-size: 16px; flex-shrink: 0; }
+  .pipeline-flow .pl-stage.pl-descartado { opacity: 0.7; border-style: dashed; }
+  .pipeline-flow .pl-stage.pl-highlight .pl-count { color: var(--success-text); }
+
+  @media (max-width: 640px) {
+    .pipeline-flow { flex-direction: column; }
+    .pipeline-flow .pl-arrow { transform: rotate(90deg); align-self: center; padding: 2px 0; }
+    .pipeline-flow .pl-stage { min-width: 0; }
+  }
+
   .empty-state {
     display: flex;
     flex-direction: column;
@@ -514,9 +548,17 @@
     <h2 class="section-title">Pesquisa de Mercado</h2>
     <p class="section-note">Radar de oportunidades e inteligência de mercado. Fontes: 2nd Street Japão, OLX Brasil e Instagram. Levantamento ainda manual — sem coleta automática/contínua por enquanto.</p>
 
+    <h3 class="subsection-title">🔄 Pipeline de Decisão de Compra</h3>
+    <p class="subsection-note">Como uma oportunidade avança — dos itens encontrados até a venda. Contagens calculadas automaticamente a partir dos dados abaixo e da aba Financeiro.</p>
+    <div class="pipeline-flow" id="pipelineFlow"></div>
+
     <h3 class="subsection-title">📌 Perfil de Compra & Regras</h3>
     <p class="subsection-note">O que buscar e o que evitar — usado para avaliar toda oportunidade encontrada.</p>
     <div class="profile-card" id="perfilCompraCard"></div>
+
+    <h3 class="subsection-title">🔍 Metodologia de Pesquisa</h3>
+    <p class="subsection-note">Como cada busca é feita, para ficar rápido e consistente a cada rodada.</p>
+    <div class="profile-card" id="metodologiaCard"></div>
 
     <h3 class="subsection-title">🎯 Painel de Oportunidades</h3>
     <p class="subsection-note">Relógios encontrados e avaliados contra o perfil de compra, com foto do anúncio original, custo final e margem estimados quando aplicável.</p>
@@ -792,6 +834,42 @@
     },
   ];
 
+  // ---- DATA (Metodologia de Pesquisa — padronizada a partir das buscas realizadas) ----
+  const metodologiaPesquisa = [
+    {
+      icon: "🇯🇵",
+      titulo: "2nd Street Japão",
+      tipo: "lista",
+      itens: [
+        "Ordenar por \"mais recentes\" (parâmetro sortBy=arrival na URL, ou 新着順 no site) — mostra primeiro o que chegou de novo",
+        "Revisar apenas a 1ª página de cada busca — itens antigos já foram vistos em rodadas anteriores",
+        "Buscar por modelo específico (ex. \"tag heuer aquaracer\") além do termo genérico da marca, para reduzir ruído",
+      ],
+    },
+    {
+      icon: "🇧🇷",
+      titulo: "OLX Brasil",
+      tipo: "lista",
+      itens: [
+        "Aplicar filtro de preço (faixa-alvo do modelo) antes de abrir anúncios individualmente",
+        { texto: "Preço abaixo do limite mínimo da faixa = descartar direto, sem checar mais nada", ruim: true },
+      ],
+    },
+    {
+      icon: "🚩",
+      titulo: "Sinais de alerta no vendedor (checar antes de validar)",
+      tipo: "lista",
+      itens: [
+        { texto: "Nota baixa ou poucas avaliações, conta muito recente", ruim: true },
+        { texto: "Categoria/marca incorreta ou incoerente no anúncio", ruim: true },
+        { texto: "Descrição genérica de marketing, sem detalhes do item específico", ruim: true },
+        { texto: "Caixa/certificado vendidos separadamente do relógio", ruim: true },
+        { texto: "Identidade, e-mail, telefone e redes sociais verificados", ruim: false },
+        { texto: "Histórico de vendas concluídas consistente e avaliações reais", ruim: false },
+      ],
+    },
+  ];
+
   // ---- DATA (snapshot manual da aba Pesquisa_Mercado > Mercado Brasileiro) ----
   const mercadoBR = [
     {
@@ -921,6 +999,55 @@
         </ul>
       </div>
     `).join("");
+  }
+
+  function renderMetodologia() {
+    const el = document.getElementById("metodologiaCard");
+    if (!el) return;
+    el.innerHTML = metodologiaPesquisa.map(bloco => `
+      <div class="pf-block">
+        <h4>${bloco.icon} ${bloco.titulo}</h4>
+        <ul>
+          ${bloco.itens.map(item => {
+            if (typeof item === "string") return `<li>${item}</li>`;
+            const cls = item.ruim === true ? "rule-bad" : item.ruim === false ? "rule-ok" : "";
+            return `<li class="${cls}">${item.texto}</li>`;
+          }).join("")}
+        </ul>
+      </div>
+    `).join("");
+  }
+
+  function renderPipeline() {
+    const el = document.getElementById("pipelineFlow");
+    if (!el) return;
+    const emAnalise = oportunidades.filter(o => o.statusClass === "candidato").length;
+    const validado = oportunidades.filter(o => o.statusClass === "validada").length;
+    const descartado = oportunidades.filter(o => o.statusClass === "descartada").length;
+    const comprado = relogios.filter(r => r.status !== "Vendido").length;
+    const vendido = relogios.filter(r => r.status === "Vendido").length;
+    const stages = [
+      { icon: "🔎", label: "Em Análise", count: emAnalise },
+      { icon: "✅", label: "Validado", count: validado, highlight: true },
+      { icon: "🛒", label: "Comprado / Em Estoque", count: comprado },
+      { icon: "💸", label: "Vendido", count: vendido, highlight: true },
+    ];
+    const arrow = `<div class="pl-arrow">→</div>`;
+    el.innerHTML = stages.map((s, i) => `
+      ${i > 0 ? arrow : ""}
+      <div class="pl-stage ${s.highlight ? "pl-highlight" : ""}">
+        <span class="pl-icon">${s.icon}</span>
+        <span class="pl-count">${s.count}</span>
+        <span class="pl-label">${s.label}</span>
+      </div>
+    `).join("") + (descartado > 0 ? `
+      <div class="pl-arrow">·</div>
+      <div class="pl-stage pl-descartado">
+        <span class="pl-icon">🗑️</span>
+        <span class="pl-count">${descartado}</span>
+        <span class="pl-label">Descartado</span>
+      </div>
+    ` : "");
   }
 
   function renderMercadoBR() {
@@ -1063,7 +1190,9 @@
   renderEstoque();
   renderPatrimonio();
   renderPesquisa();
+  renderPipeline();
   renderPerfilCompra();
+  renderMetodologia();
   renderOportunidades();
   renderMercadoBR();
   renderMonitorados();

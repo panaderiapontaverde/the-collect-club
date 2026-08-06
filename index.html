@@ -259,7 +259,73 @@
     line-height: 1.5;
   }
   .opp-card .obs-box strong { color: var(--text-primary); }
+  .opp-card .alert-box {
+    background: rgba(250,178,25,0.12);
+    border: 1px solid rgba(250,178,25,0.4);
+    border-left: 3px solid #d99a00;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    display: flex;
+    gap: 8px;
+  }
+  .opp-card .alert-box .a-icon { flex-shrink: 0; font-size: 14px; }
+  .opp-card .alert-box strong { color: #9a6b00; }
+  :root[data-theme="dark"] .opp-card .alert-box strong { color: #fab219; }
   .opp-card .foot-row { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 4px; }
+
+  .profile-card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+  }
+  .profile-card .pf-block h4 {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .profile-card .pf-block p, .profile-card .pf-block ul {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+  }
+  .profile-card .pf-block ul { list-style: none; }
+  .profile-card .pf-block li { padding-left: 14px; position: relative; margin-bottom: 3px; }
+  .profile-card .pf-block li::before { content: "•"; position: absolute; left: 0; color: var(--text-muted); }
+  .profile-card .pf-block li.rule-bad::before { content: "✕"; color: #d03b3b; font-size: 10px; }
+  .profile-card .pf-block li.rule-ok::before { content: "✓"; color: var(--success-text); font-size: 10px; }
+
+  .market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .market-card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .market-card .mk-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 8px; }
+  .market-card h4 { font-size: 13.5px; font-weight: 600; margin: 0; color: var(--text-primary); }
+  .market-card .mk-source { font-size: 11px; color: var(--text-muted); }
+  .market-card .mk-prices { display: flex; gap: 16px; margin-bottom: 10px; flex-wrap: wrap; }
+  .market-card .mk-prices .mp-item .mp-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.02em; color: var(--text-muted); display: block; margin-bottom: 2px; }
+  .market-card .mk-prices .mp-item .mp-value { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-primary); }
+  .market-card .mk-note { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
 
   .empty-state {
     display: flex;
@@ -448,9 +514,17 @@
     <h2 class="section-title">Pesquisa de Mercado</h2>
     <p class="section-note">Radar de oportunidades e inteligência de mercado. Fontes: 2nd Street Japão, OLX Brasil e Instagram. Levantamento ainda manual — sem coleta automática/contínua por enquanto.</p>
 
+    <h3 class="subsection-title">📌 Perfil de Compra & Regras</h3>
+    <p class="subsection-note">O que buscar e o que evitar — usado para avaliar toda oportunidade encontrada.</p>
+    <div class="profile-card" id="perfilCompraCard"></div>
+
     <h3 class="subsection-title">🎯 Painel de Oportunidades</h3>
     <p class="subsection-note">Relógios encontrados e avaliados contra o perfil de compra, com foto do anúncio original, custo final e margem estimados quando aplicável.</p>
     <div class="opp-card-grid" id="oportunidadesGrid"></div>
+
+    <h3 class="subsection-title">📊 Preços de Mercado (OLX Brasil)</h3>
+    <p class="subsection-note">Faixas de preço coletadas no mercado brasileiro, usadas para estimar potencial de revenda e faixa de negociação.</p>
+    <div class="market-grid" id="mercadoBrGrid"></div>
 
     <h3 class="subsection-title">👁️ Relógios Monitorados</h3>
     <p class="subsection-note">Watchlist de modelos de interesse com preço-alvo de compra, para agir assim que aparecer uma oportunidade real.</p>
@@ -630,7 +704,8 @@
       status: "Oportunidade Validada",
       statusClass: "validada",
       link: "https://www.2ndstreet.jp/goods/detail/goodsId/2347920394900/shopsId/31933",
-      observacao: "<strong>Melhor compatibilidade com o perfil</strong> (caixa ~38mm / pulseira ~18,5cm) entre os itens encontrados: caixa aprox. 42x37mm e pulso de 18cm — bem próximo do alvo. Estado Usado B, sem menção de caixa/certificado no anúncio. Custo final considera comissão (~22,9%), frete internacional (~4,2%) e imposto (~9,6%) pelo modelo histórico, + R$150 de possível polimento. Potencial de revenda baseado em 2 anúncios de \"200 meters\" no OLX (R$4.800-4.850) — margem estimada acima de 100%. <strong>Nota (06/08/2026):</strong> pulseira em elos arredondados/cushion (estilo \"osso\", tipo S/el) — João revisou fotos e informou que não é o tipo de pulseira que mais gosta, mas mantém a oportunidade validada pela margem alta.",
+      observacao: "<strong>Melhor compatibilidade com o perfil</strong> (caixa ~38mm / pulseira ~18,5cm) entre os itens encontrados: caixa aprox. 42x37mm e pulso de 18cm — bem próximo do alvo. Estado Usado B, sem menção de caixa/certificado no anúncio. Custo final considera comissão (~22,9%), frete internacional (~4,2%) e imposto (~9,6%) pelo modelo histórico, + R$150 de possível polimento. Potencial de revenda baseado em 2 anúncios de \"200 meters\" no OLX (R$4.800-4.850) — margem estimada acima de 100%.",
+      alerta: "<strong>Nota (06/08/2026):</strong> pulseira em elos arredondados/cushion (estilo \"osso\", tipo S/el) — João revisou fotos e informou que não é o tipo de pulseira que mais gosta, mas mantém a oportunidade validada pela margem alta.",
     },
     {
       relogio: "TAG Heuer Aquaracer (WBD1311)",
@@ -658,7 +733,75 @@
       status: "Em Análise",
       statusClass: "candidato",
       link: "https://www.2ndstreet.jp/goods/detail/goodsId/2335004731178/shopsId/31090",
-      observacao: "<strong>Novo tipo de interesse do João.</strong> Seiko Prospex — estado Usado B, caixa aprox. 40-43mm (medida do site: 4,0x4,3cm), sem menção de caixa/certificado. Custo parcial estimado (item + frete JP + comissão + frete internacional + imposto, modelo histórico) ficaria em torno de R$1.987,94, sem contar eventual polimento. <strong>Pendente:</strong> pesquisa de preço de revenda no OLX para validar margem antes de decidir a compra.",
+      observacao: "<strong>Novo tipo de interesse do João.</strong> Seiko Prospex — estado Usado B, caixa aprox. 40-43mm (medida do site: 4,0x4,3cm), sem menção de caixa/certificado. Custo parcial estimado (item + frete JP + comissão + frete internacional + imposto, modelo histórico) ficaria em torno de R$1.987,94, sem contar eventual polimento.",
+      alerta: "<strong>Pendente:</strong> pesquisa de preço de revenda no OLX para validar margem antes de decidir a compra.",
+    },
+  ];
+
+  // ---- DATA (Perfil de Compra & Regras — consolidado a partir das conversas com João) ----
+  const perfilCompra = [
+    {
+      icon: "🎯",
+      titulo: "Modelos-alvo (2nd Street Japão)",
+      tipo: "lista",
+      itens: [
+        "TAG Heuer — séries 2000, Aquaracer, Fórmula 1, Professional",
+        "Seiko Prospex",
+      ],
+    },
+    {
+      icon: "📏",
+      titulo: "Medidas ideais (TAG Heuer)",
+      tipo: "lista",
+      itens: [
+        "Caixa: aprox. 38mm",
+        "Pulseira: aprox. 18,5cm",
+      ],
+    },
+    {
+      icon: "🚫",
+      titulo: "Não gosta",
+      tipo: "lista",
+      itens: [
+        { texto: "Pulseira em elos arredondados/cushion (estilo \"osso\", tipo S/el) — presente no WG1113-0 validado", ruim: true },
+      ],
+    },
+    {
+      icon: "💰",
+      titulo: "Omega MoonSwatch (compra via OLX)",
+      tipo: "lista",
+      itens: [
+        { texto: "Faixa alvo de compra: R$1.500 – R$2.200 (há margem de negociação no OLX)", ruim: false },
+        { texto: "Abaixo de R$1.500 é muito provavelmente réplica — descartar", ruim: true },
+      ],
+    },
+  ];
+
+  // ---- DATA (snapshot manual da aba Pesquisa_Mercado > Mercado Brasileiro) ----
+  const mercadoBR = [
+    {
+      marcaModelo: "TAG Heuer Professional (200m)",
+      fonte: "OLX Brasil",
+      dataColeta: "05/08/2026",
+      amostra: "12 anúncios (de 62 totais para \"tag heuer professional\")",
+      precoMin: 4500,
+      precoMedio: 5117,
+      precoMax: 7000,
+      faixaNegociacao: "R$4.200 – R$4.600 (estimada)",
+      nota: "2 anúncios específicos de \"200 meters\" ficaram em R$4.800–4.850, usados como referência mais conservadora para o candidato WG1113-0.",
+      alerta: null,
+    },
+    {
+      marcaModelo: "Omega MoonSwatch (Bioceramic Moonphase)",
+      fonte: "OLX Brasil",
+      dataColeta: "05/08/2026",
+      amostra: "112 anúncios no total",
+      precoMin: 399,
+      precoMedio: null,
+      precoMax: 3500,
+      faixaNegociacao: "R$1.500 – R$2.200 (faixa alvo de compra)",
+      nota: "Genuínos observados na faixa de R$3.200–3.500.",
+      alerta: "A busca traz 112 anúncios, mas a grande maioria (dezenas de um único vendedor, ex. \"Pulse Lux Ltda\") são réplicas vendidas a R$590 fixo, anunciadas como \"Premium Top 100% Funcional\". Preço abaixo de R$1.500 é muito provavelmente réplica.",
     },
   ];
 
@@ -739,10 +882,52 @@
             </div>
           ` : ""}
           ${o.observacao ? `<div class="obs-box">${o.observacao}</div>` : ""}
+          ${o.alerta ? `<div class="alert-box"><span class="a-icon">⚠️</span><span>${o.alerta}</span></div>` : ""}
           <div class="foot-row">
             ${o.link ? `<a class="opp-link" href="${o.link}" target="_blank" rel="noopener">ver anúncio original ↗</a>` : "<span></span>"}
           </div>
         </div>
+      </div>
+    `).join("");
+  }
+
+  function renderPerfilCompra() {
+    const el = document.getElementById("perfilCompraCard");
+    if (!el) return;
+    el.innerHTML = perfilCompra.map(bloco => `
+      <div class="pf-block">
+        <h4>${bloco.icon} ${bloco.titulo}</h4>
+        <ul>
+          ${bloco.itens.map(item => {
+            if (typeof item === "string") return `<li>${item}</li>`;
+            const cls = item.ruim === true ? "rule-bad" : item.ruim === false ? "rule-ok" : "";
+            return `<li class="${cls}">${item.texto}</li>`;
+          }).join("")}
+        </ul>
+      </div>
+    `).join("");
+  }
+
+  function renderMercadoBR() {
+    const grid = document.getElementById("mercadoBrGrid");
+    if (!grid) return;
+    grid.innerHTML = mercadoBR.map(m => `
+      <div class="market-card">
+        <div class="mk-head">
+          <h4>${m.marcaModelo}</h4>
+          <span class="mk-source">${m.fonte} · ${m.dataColeta}</span>
+        </div>
+        <div class="mk-prices">
+          <div class="mp-item"><span class="mp-label">Mínimo</span><span class="mp-value">${fmtBRL(m.precoMin)}</span></div>
+          ${m.precoMedio !== null ? `<div class="mp-item"><span class="mp-label">Médio</span><span class="mp-value">${fmtBRL(m.precoMedio)}</span></div>` : ""}
+          <div class="mp-item"><span class="mp-label">Máximo</span><span class="mp-value">${fmtBRL(m.precoMax)}</span></div>
+        </div>
+        <div class="mk-note">
+          <strong>Amostra:</strong> ${m.amostra}<br>
+          <strong>Faixa de negociação:</strong> ${m.faixaNegociacao}<br>
+          ${m.nota}
+        </div>
+        ${m.alerta ? `<div class="alert-box" style="margin-top:10px;"><span class="a-icon">⚠️</span><span>${m.alerta}</span></div>` : ""}
       </div>
     `).join("");
   }
@@ -863,7 +1048,9 @@
   renderEstoque();
   renderPatrimonio();
   renderPesquisa();
+  renderPerfilCompra();
   renderOportunidades();
+  renderMercadoBR();
   renderMonitorados();
 
   // ---- TABS ----

@@ -277,36 +277,72 @@
   .opp-card .foot-row { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 4px; }
 
   .profile-card {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .profile-card .pf-block {
     background: var(--surface-1);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 18px 20px;
-    margin-bottom: 24px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 18px;
+    border-left: 3px solid var(--text-muted);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .profile-card .pf-block.cat-alvo { border-left-color: #3b7dd0; }
+  .profile-card .pf-block.cat-medida { border-left-color: #8a6dd0; }
+  .profile-card .pf-block.cat-restricao { border-left-color: #d03b3b; }
+  .profile-card .pf-block.cat-preco { border-left-color: #1f9d55; }
+  .profile-card .pf-block .pf-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
   }
   .profile-card .pf-block h4 {
     font-size: 12.5px;
     font-weight: 600;
     color: var(--text-primary);
-    margin: 0 0 6px;
+    margin: 0;
     display: flex;
     align-items: center;
     gap: 6px;
+    line-height: 1.3;
   }
+  .profile-card .pf-tag {
+    flex-shrink: 0;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 20px;
+    white-space: nowrap;
+    color: var(--text-secondary);
+    background: var(--surface-2, rgba(128,128,128,0.12));
+  }
+  .pf-block.cat-alvo .pf-tag { color: #3b7dd0; background: rgba(59,125,208,0.12); }
+  .pf-block.cat-medida .pf-tag { color: #8a6dd0; background: rgba(138,109,208,0.12); }
+  .pf-block.cat-restricao .pf-tag { color: #d03b3b; background: rgba(208,59,59,0.12); }
+  .pf-block.cat-preco .pf-tag { color: #1f9d55; background: rgba(31,157,85,0.12); }
   .profile-card .pf-block p, .profile-card .pf-block ul {
     font-size: 12.5px;
     color: var(--text-secondary);
-    line-height: 1.6;
+    line-height: 1.55;
     margin: 0;
     padding: 0;
   }
   .profile-card .pf-block ul { list-style: none; }
-  .profile-card .pf-block li { padding-left: 14px; position: relative; margin-bottom: 3px; }
+  .profile-card .pf-block li { padding-left: 16px; position: relative; margin-bottom: 4px; }
+  .profile-card .pf-block li:last-child { margin-bottom: 0; }
   .profile-card .pf-block li::before { content: "•"; position: absolute; left: 0; color: var(--text-muted); }
-  .profile-card .pf-block li.rule-bad::before { content: "✕"; color: #d03b3b; font-size: 10px; }
-  .profile-card .pf-block li.rule-ok::before { content: "✓"; color: var(--success-text); font-size: 10px; }
+  .profile-card .pf-block li.rule-bad::before { content: "✕"; color: #d03b3b; font-size: 10px; font-weight: 700; }
+  .profile-card .pf-block li.rule-ok::before { content: "✓"; color: var(--success-text); font-size: 10px; font-weight: 700; }
+  .profile-card .pf-block .pf-metric-row { display: flex; justify-content: space-between; align-items: baseline; padding: 3px 0; border-bottom: 1px dashed var(--border); }
+  .profile-card .pf-block .pf-metric-row:last-child { border-bottom: none; }
+  .profile-card .pf-block .pf-metric-label { color: var(--text-muted); }
+  .profile-card .pf-block .pf-metric-value { font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums; }
 
   .market-grid {
     display: grid;
@@ -799,33 +835,42 @@
   const perfilCompra = [
     {
       icon: "🎯",
-      titulo: "Modelos-alvo (2nd Street Japão)",
+      titulo: "Modelos-alvo",
+      tag: "Alvo de compra",
+      categoria: "alvo",
       tipo: "lista",
       itens: [
         "TAG Heuer — séries 2000, Aquaracer, Fórmula 1, Professional",
         "Seiko Prospex",
+        "Seiko — lançamentos recentes do catálogo atual (ex: Presage, 5 Sports, King Seiko, Astron), novo ou usado",
       ],
     },
     {
       icon: "📏",
       titulo: "Medidas ideais (TAG Heuer)",
-      tipo: "lista",
+      tag: "Medida-alvo",
+      categoria: "medida",
+      tipo: "metricas",
       itens: [
-        "Caixa: aprox. 38mm",
-        "Pulseira: aprox. 18,5cm",
+        { label: "Caixa", valor: "≈ 38mm" },
+        { label: "Pulseira", valor: "≈ 18,5cm" },
       ],
     },
     {
       icon: "🚫",
-      titulo: "Não gosta",
+      titulo: "Restrição de pulseira",
+      tag: "Não comprar se",
+      categoria: "restricao",
       tipo: "lista",
       itens: [
-        { texto: "Pulseira em elos arredondados/cushion (estilo \"osso\", tipo S/el) — presente no WG1113-0 validado", ruim: true },
+        { texto: "Elos arredondados/cushion (estilo \"osso\", tipo S/el) — presente no WG1113-0 validado", ruim: true },
       ],
     },
     {
       icon: "💰",
-      titulo: "Omega MoonSwatch (compra via OLX)",
+      titulo: "Omega MoonSwatch (OLX)",
+      tag: "Regra de preço",
+      categoria: "preco",
       tipo: "lista",
       itens: [
         { texto: "Faixa alvo de compra: R$1.500 – R$2.200 (há margem de negociação no OLX)", ruim: false },
@@ -987,18 +1032,31 @@
   function renderPerfilCompra() {
     const el = document.getElementById("perfilCompraCard");
     if (!el) return;
-    el.innerHTML = perfilCompra.map(bloco => `
-      <div class="pf-block">
-        <h4>${bloco.icon} ${bloco.titulo}</h4>
-        <ul>
-          ${bloco.itens.map(item => {
+    el.innerHTML = perfilCompra.map(bloco => {
+      const catClass = bloco.categoria ? `cat-${bloco.categoria}` : "";
+      const tag = bloco.tag ? `<span class="pf-tag">${bloco.tag}</span>` : "";
+      const body = bloco.tipo === "metricas"
+        ? `<div>${bloco.itens.map(m => `
+            <div class="pf-metric-row">
+              <span class="pf-metric-label">${m.label}</span>
+              <span class="pf-metric-value">${m.valor}</span>
+            </div>
+          `).join("")}</div>`
+        : `<ul>${bloco.itens.map(item => {
             if (typeof item === "string") return `<li>${item}</li>`;
             const cls = item.ruim === true ? "rule-bad" : item.ruim === false ? "rule-ok" : "";
             return `<li class="${cls}">${item.texto}</li>`;
-          }).join("")}
-        </ul>
-      </div>
-    `).join("");
+          }).join("")}</ul>`;
+      return `
+        <div class="pf-block ${catClass}">
+          <div class="pf-head">
+            <h4>${bloco.icon} ${bloco.titulo}</h4>
+            ${tag}
+          </div>
+          ${body}
+        </div>
+      `;
+    }).join("");
   }
 
   function renderMetodologia() {

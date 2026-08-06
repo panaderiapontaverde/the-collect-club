@@ -216,6 +216,51 @@
   .subsection-title { font-size: 13.5px; font-weight: 600; margin: 28px 0 4px; color: var(--text-primary); }
   .subsection-note { font-size: 12.5px; color: var(--text-muted); margin: 0 0 12px; }
 
+  .opp-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 14px;
+  }
+  .opp-card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .opp-card .photo-wrap {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: var(--gridline);
+    overflow: hidden;
+    position: relative;
+  }
+  .opp-card .photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .opp-card .photo-wrap .no-photo {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted); font-size: 12px; flex-direction: column; gap: 6px;
+  }
+  .opp-card .photo-wrap .no-photo .icon { font-size: 24px; }
+  .opp-card .body { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .opp-card .title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .opp-card h4 { font-size: 14.5px; font-weight: 600; margin: 0; color: var(--text-primary); line-height: 1.35; }
+  .opp-card .fonte { font-size: 12px; color: var(--text-muted); }
+  .opp-card .price-row { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 12.5px; }
+  .opp-card .price-row .pr-item .pr-label { color: var(--text-muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.02em; display: block; margin-bottom: 2px; }
+  .opp-card .price-row .pr-item .pr-value { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .opp-card .obs-box {
+    background: var(--page-plane);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .opp-card .obs-box strong { color: var(--text-primary); }
+  .opp-card .foot-row { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 4px; }
+
   .empty-state {
     display: flex;
     flex-direction: column;
@@ -404,24 +449,8 @@
     <p class="section-note">Radar de oportunidades e inteligência de mercado. Fontes: 2nd Street Japão, OLX Brasil e Instagram. Levantamento ainda manual — sem coleta automática/contínua por enquanto.</p>
 
     <h3 class="subsection-title">🎯 Painel de Oportunidades</h3>
-    <p class="subsection-note">Relógios encontrados e avaliados contra o perfil de compra, com custo final e margem estimados quando aplicável.</p>
-    <div class="card opp-table-wrap">
-      <table id="oportunidadesTable" class="stack-mobile">
-        <thead>
-          <tr>
-            <th>Relógio</th>
-            <th>Fonte</th>
-            <th>Valor Anunciado</th>
-            <th>Custo Final Est.</th>
-            <th>Potencial Revenda</th>
-            <th>Margem Est.</th>
-            <th>Status</th>
-            <th>Link</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <p class="subsection-note">Relógios encontrados e avaliados contra o perfil de compra, com foto do anúncio original, custo final e margem estimados quando aplicável.</p>
+    <div class="opp-card-grid" id="oportunidadesGrid"></div>
 
     <h3 class="subsection-title">👁️ Relógios Monitorados</h3>
     <p class="subsection-note">Watchlist de modelos de interesse com preço-alvo de compra, para agir assim que aparecer uma oportunidade real.</p>
@@ -592,6 +621,7 @@
     {
       relogio: "TAG Heuer Professional 200 Meters (WG1113-0)",
       fonte: "2nd Street Japão",
+      imagem: "https://cdn2.2ndstreet.jp/img/pc/goods/234792/03/94900/1_mn.jpg",
       valorAnunciado: "¥43.890 (R$1.435,20)",
       custoFinal: 2137.94,
       potencialRevenda: 4300.00,
@@ -600,10 +630,12 @@
       status: "Oportunidade Validada",
       statusClass: "validada",
       link: "https://www.2ndstreet.jp/goods/detail/goodsId/2347920394900/shopsId/31933",
+      observacao: "<strong>Melhor compatibilidade com o perfil</strong> (caixa ~38mm / pulseira ~18,5cm) entre os itens encontrados: caixa aprox. 42x37mm e pulso de 18cm — bem próximo do alvo. Estado Usado B, sem menção de caixa/certificado no anúncio. Custo final considera comissão (~22,9%), frete internacional (~4,2%) e imposto (~9,6%) pelo modelo histórico, + R$150 de possível polimento. Potencial de revenda baseado em 2 anúncios de \"200 meters\" no OLX (R$4.800-4.850) — margem estimada acima de 100%.",
     },
     {
       relogio: "TAG Heuer Aquaracer (WBD1311)",
       fonte: "2nd Street Japão",
+      imagem: "https://cdn2.2ndstreet.jp/img/pc/goods/233259/18/92015/1_mn.jpg",
       valorAnunciado: "¥76.890 (R$2.514,30)",
       custoFinal: null,
       potencialRevenda: null,
@@ -612,6 +644,7 @@
       status: "Descartado - Fora do Perfil",
       statusClass: "descartada",
       link: "https://www.2ndstreet.jp/goods/detail/goodsId/2332591892015/shopsId/31894",
+      observacao: "<strong>Fora do perfil de compra.</strong> Após definição do perfil (caixa ~38mm / pulseira ~18,5cm), este item não é compatível: pulso de apenas 14cm indica versão feminina/reduzida. Estado Usado B, caixa incluída, pulseira em aço com marcas de uso (arranhões). Registrado inicialmente como teste da Pesquisa de Mercado antes do perfil estar definido.",
     },
   ];
 
@@ -660,19 +693,35 @@
   ];
 
   function renderOportunidades() {
-    const tbody = document.querySelector("#oportunidadesTable tbody");
-    if (!tbody) return;
-    tbody.innerHTML = oportunidades.map(o => `
-      <tr>
-        <td data-label="Relógio">${o.relogio}</td>
-        <td data-label="Fonte">${o.fonte}</td>
-        <td data-label="Valor Anunciado">${o.valorAnunciado}</td>
-        <td data-label="Custo Final Est.">${o.custoFinal !== null ? fmtBRL(o.custoFinal) : "—"}</td>
-        <td data-label="Potencial Revenda">${o.potencialRevenda !== null ? fmtBRL(o.potencialRevenda) : "—"}</td>
-        <td data-label="Margem Est.">${o.margemR !== null ? `<span class="opp-margem">${fmtBRL(o.margemR)} (${o.margemPct.toFixed(1).replace(".", ",")}%)</span>` : "—"}</td>
-        <td data-label="Status"><span class="opp-status ${o.statusClass}">${o.status}</span></td>
-        <td data-label="Link">${o.link ? `<a class="opp-link" href="${o.link}" target="_blank" rel="noopener">ver anúncio ↗</a>` : "—"}</td>
-      </tr>
+    const grid = document.getElementById("oportunidadesGrid");
+    if (!grid) return;
+    grid.innerHTML = oportunidades.map(o => `
+      <div class="opp-card">
+        <div class="photo-wrap">
+          ${o.imagem
+            ? `<img src="${o.imagem}" alt="Foto do anúncio: ${o.relogio}" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest('.photo-wrap').innerHTML='<div class=&quot;no-photo&quot;><span class=&quot;icon&quot;>📷</span>Foto indisponível</div>'">`
+            : `<div class="no-photo"><span class="icon">📷</span>Sem foto</div>`
+          }
+        </div>
+        <div class="body">
+          <div class="title-row">
+            <h4>${o.relogio}</h4>
+            <span class="opp-status ${o.statusClass}">${o.status}</span>
+          </div>
+          <div class="fonte">${o.fonte} · ${o.valorAnunciado}</div>
+          ${o.custoFinal !== null ? `
+            <div class="price-row">
+              <div class="pr-item"><span class="pr-label">Custo Final Est.</span><span class="pr-value">${fmtBRL(o.custoFinal)}</span></div>
+              <div class="pr-item"><span class="pr-label">Potencial Revenda</span><span class="pr-value">${fmtBRL(o.potencialRevenda)}</span></div>
+              <div class="pr-item"><span class="pr-label">Margem Est.</span><span class="pr-value opp-margem">${fmtBRL(o.margemR)} (${o.margemPct.toFixed(1).replace(".", ",")}%)</span></div>
+            </div>
+          ` : ""}
+          ${o.observacao ? `<div class="obs-box">${o.observacao}</div>` : ""}
+          <div class="foot-row">
+            ${o.link ? `<a class="opp-link" href="${o.link}" target="_blank" rel="noopener">ver anúncio original ↗</a>` : "<span></span>"}
+          </div>
+        </div>
+      </div>
     `).join("");
   }
 

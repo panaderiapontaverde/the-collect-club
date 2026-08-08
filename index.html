@@ -1007,7 +1007,8 @@
       itens: [
         "Ordenar por \"mais recentes\" (parâmetro sortBy=arrival na URL, ou 新着順 no site) — mostra primeiro o que chegou de novo",
         "Revisar apenas a 1ª página de cada busca — itens antigos já foram vistos em rodadas anteriores",
-        "Buscar por modelo específico (ex. \"tag heuer aquaracer\") além do termo genérico da marca, para reduzir ruído",
+        { texto: "Buscar só por modelo específico (ex. \"tag heuer aquaracer\") não é suficiente sozinho — muitos anúncios usam nome do modelo em katakana ou não têm nome de modelo no título", ruim: true },
+        "Correção (08/08/2026): busca principal deve ser pela marca sozinha (ex. \"TAGHeuer\", sortBy=arrival), revisando a página inteira item por item — busca por modelo específico é só reforço complementar",
       ],
     },
     {

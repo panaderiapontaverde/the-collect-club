@@ -286,6 +286,10 @@
   .opp-card .alert-box strong { color: #9a6b00; }
   :root[data-theme="dark"] .opp-card .alert-box strong { color: #fab219; }
   .opp-card .foot-row { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 4px; }
+  .opp-card .opp-sku {
+    font-weight: 600; color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+  }
   .opp-card .score-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .opp-card .score-badge {
     display: inline-flex; align-items: baseline; gap: 3px;
@@ -628,7 +632,7 @@
     <div class="pipeline-flow" id="pipelineFlow"></div>
 
     <h3 class="subsection-title">🎯 Painel de Oportunidades</h3>
-    <p class="subsection-note">Relógios encontrados, com nota (0–10) e decisão sugerida. Custo final, mercado e detalhes completos ficam em "ver detalhes".</p>
+    <p class="subsection-note">Apenas oportunidades ativas que se encaixam no perfil de compra — com SKU, nota (0–10) e decisão sugerida. Descartadas e já vendidas não aparecem aqui, mas continuam contadas no pipeline acima. Custo final, mercado e detalhes completos ficam em "ver detalhes".</p>
     <div class="opp-card-grid" id="oportunidadesGrid"></div>
 
     <h3 class="subsection-title">📊 Preços de Mercado (OLX Brasil)</h3>
@@ -811,7 +815,8 @@
   // ---- DATA (snapshot manual da aba Pesquisa_Mercado > Oportunidades) ----
   const oportunidades = [
     {
-      relogio: "TAG Heuer Professional 200 Meters (WG1113-0)",
+      relogio: "TAG Heuer Professional 200 Meters",
+      sku: "WG1113-0",
       fonte: "2nd Street Japão",
       imagem: "https://cdn2.2ndstreet.jp/img/pc/goods/234792/03/94900/1_mn.jpg",
       valorAnunciado: "¥43.890 (R$1.435,20)",
@@ -829,7 +834,8 @@
       alerta: "<strong>Nota (06/08/2026):</strong> pulseira em elos arredondados/cushion (estilo \"osso\", tipo S/el) — João revisou fotos e informou que não é o tipo de pulseira que mais gosta, mas mantém a oportunidade validada pela margem alta.",
     },
     {
-      relogio: "TAG Heuer Aquaracer (WBD1311)",
+      relogio: "TAG Heuer Aquaracer",
+      sku: "WBD1311",
       fonte: "2nd Street Japão",
       imagem: "https://cdn2.2ndstreet.jp/img/pc/goods/233259/18/92015/1_mn.jpg",
       valorAnunciado: "¥76.890 (R$2.514,30)",
@@ -846,7 +852,8 @@
       observacao: "<strong>Fora do perfil de compra.</strong> Após definição do perfil (caixa ~38mm / pulseira ~18,5cm), este item não é compatível: pulso de apenas 14cm indica versão feminina/reduzida. Estado Usado B, caixa incluída, pulseira em aço com marcas de uso (arranhões). Registrado inicialmente como teste da Pesquisa de Mercado antes do perfil estar definido.",
     },
     {
-      relogio: "Seiko Prospex Solar (ref. V192-0AF0)",
+      relogio: "Seiko Prospex Solar",
+      sku: "V192-0AF0",
       fonte: "2nd Street Japão",
       imagem: "https://cdn2.2ndstreet.jp/img/pc/goods/233500/47/31178/1_mn.jpg",
       valorAnunciado: "¥43.890 (R$1.435,20)",
@@ -1047,10 +1054,17 @@
     },
   ];
 
+  // Oportunidades ativas: exclui itens descartados (fora do perfil) e já vendidos/encerrados —
+  // o painel deve mostrar só o que de fato é uma oportunidade de compra em aberto.
+  function oportunidadesAtivas() {
+    return oportunidades.filter(o => o.decisao !== "nao-comprar" && !/vendid[oa]/i.test(o.status || ""));
+  }
+
   function renderOportunidades() {
     const grid = document.getElementById("oportunidadesGrid");
     if (!grid) return;
-    grid.innerHTML = oportunidades.map(o => `
+    const ativas = oportunidadesAtivas();
+    grid.innerHTML = ativas.map(o => `
       <div class="opp-card">
         <div class="photo-wrap">
           ${o.imagem
@@ -1063,7 +1077,7 @@
             <h4>${o.relogio}</h4>
             <span class="opp-status ${o.statusClass}">${o.status}</span>
           </div>
-          <div class="fonte">${o.fonte} · ${o.valorAnunciado}</div>
+          <div class="fonte">${o.sku ? `<span class="opp-sku">SKU ${o.sku}</span> · ` : ""}${o.fonte} · ${o.valorAnunciado}</div>
           ${o.custoFinal !== null ? `
             <div class="price-row">
               <div class="pr-item"><span class="pr-label">Custo Final Est.</span><span class="pr-value">${fmtBRL(o.custoFinal)}</span></div>

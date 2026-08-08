@@ -881,13 +881,13 @@
       margemR: null,
       margemPct: null,
       nota: 6.0,
-      decisao: "aguardar",
-      decisaoLabel: "Aguardar (confirmar mercado)",
+      decisao: "confirmar",
+      decisaoLabel: "Comprar após confirmar (medidas)",
       status: "Em Análise",
       statusClass: "candidato",
       link: "https://www.2ndstreet.jp/goods/detail/goodsId/2335004731178/shopsId/31090",
-      observacao: "<strong>Novo tipo de interesse do João.</strong> Seiko Prospex — estado Usado B, caixa aprox. 40-43mm (medida do site: 4,0x4,3cm), sem menção de caixa/certificado. Custo estimado pelo motor calibrado (comissão 20%, frete internacional 4,2%, imposto 9,6% sobre subtotal, câmbio automático) = R$1.924,52, sem contar eventual polimento. Ainda falta o preço de revenda no OLX para calcular a margem.",
-      alerta: "<strong>Pendente:</strong> pesquisa de preço de revenda no OLX para validar margem antes de decidir a compra.",
+      observacao: "<strong>Novo tipo de interesse do João.</strong> Seiko Prospex — estado Usado B, caixa aprox. 40-43mm (medida do site: 4,0x4,3cm), sem menção de caixa/certificado. Custo estimado pelo motor calibrado (comissão 20%, frete internacional 4,2%, imposto 9,6% sobre subtotal, câmbio automático) = R$1.924,52, sem contar eventual polimento. Critério de decisão é o encaixe físico, não o preço de revenda — a pesquisa de mercado no OLX fica só como referência de margem, não bloqueia a compra.",
+      alerta: "<strong>Pendente:</strong> o anúncio não informa o comprimento da pulseira (alvo: ~18,5cm) e o diâmetro (40-43mm) está acima do alvo de ~38mm. Falta confirmar se essas medidas ainda são aceitáveis antes de fechar a compra.",
     },
     {
       relogio: "Omega x Swatch MoonSwatch Mission to Earth",
@@ -912,6 +912,17 @@
 
   // ---- DATA (Perfil de Compra & Regras — consolidado a partir das conversas com João) ----
   const perfilCompra = [
+    {
+      icon: "⚖️",
+      titulo: "Critério decisivo de compra",
+      tag: "Prioridade",
+      categoria: "criterio",
+      tipo: "lista",
+      itens: [
+        "Compras no Japão (2nd Street): o que decide é o <strong>encaixe físico</strong> — diâmetro da caixa e comprimento da pulseira dentro do perfil. Preço de revenda não bloqueia a decisão: sempre existe mercado comprador no Brasil para esses modelos, então a pesquisa de preço serve só de referência pra estimar a margem, não é pré-requisito pra decidir comprar.",
+        "OLX Brasil (ex: MoonSwatch): aqui é o oposto — a oportunidade É o preço. A compra só existe se o valor estiver abaixo do praticado no mercado, então o preço é o critério central.",
+      ],
+    },
     {
       icon: "🎯",
       titulo: "Modelos-alvo",
@@ -1070,7 +1081,7 @@
       precoAlvo: "—",
       status: "Em Análise",
       statusClass: "candidato",
-      obs: "João confirmou que é um tipo que também gosta de comprar. Anúncio identificado no 2nd Street (ver Painel de Oportunidades acima) — pendente pesquisa de preço de revenda no OLX para validar margem.",
+      obs: "João confirmou que é um tipo que também gosta de comprar. Anúncio identificado no 2nd Street (ver Painel de Oportunidades acima) — pendente confirmar comprimento da pulseira e se o diâmetro (40-43mm, acima do alvo de ~38mm) é aceitável.",
     },
   ];
 

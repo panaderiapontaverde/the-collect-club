@@ -215,6 +215,16 @@
   .opp-link { color: var(--series-1); text-decoration: none; font-size: 12px; }
   .opp-link:hover { text-decoration: underline; }
   .subsection-title { font-size: 13.5px; font-weight: 600; margin: 28px 0 4px; color: var(--text-primary); }
+  details.section-collapse { margin-bottom: 24px; }
+  details.section-collapse > summary {
+    cursor: pointer; list-style: none; user-select: none;
+    font-size: 13.5px; font-weight: 600; color: var(--text-primary);
+    display: flex; align-items: center; gap: 6px;
+  }
+  details.section-collapse > summary::-webkit-details-marker { display: none; }
+  details.section-collapse > summary::after { content: "▸"; font-size: 11px; color: var(--text-muted); margin-left: 4px; }
+  details.section-collapse[open] > summary::after { content: "▾"; }
+  details.section-collapse > .subsection-note { margin-top: 4px; }
   .subsection-note { font-size: 12.5px; color: var(--text-muted); margin: 0 0 12px; }
 
   .opp-card-grid {
@@ -276,6 +286,34 @@
   .opp-card .alert-box strong { color: #9a6b00; }
   :root[data-theme="dark"] .opp-card .alert-box strong { color: #fab219; }
   .opp-card .foot-row { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 4px; }
+  .opp-card .score-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .opp-card .score-badge {
+    display: inline-flex; align-items: baseline; gap: 3px;
+    font-size: 12px; font-weight: 700; color: var(--text-primary);
+    background: var(--page-plane); border: 1px solid var(--border);
+    border-radius: 8px; padding: 3px 9px;
+    font-variant-numeric: tabular-nums;
+  }
+  .opp-card .score-badge .score-max { font-size: 10px; font-weight: 500; color: var(--text-muted); }
+  .opp-card .decisao-tag {
+    display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.01em;
+    padding: 3px 10px; border-radius: 999px; white-space: nowrap;
+  }
+  .opp-card .decisao-tag.comprar { background: rgba(12,163,12,0.14); color: var(--success-text); }
+  .opp-card .decisao-tag.confirmar { background: rgba(42,120,214,0.14); color: #1a5eae; }
+  :root[data-theme="dark"] .opp-card .decisao-tag.confirmar { color: #6fa8ea; }
+  .opp-card .decisao-tag.aguardar { background: rgba(250,178,25,0.18); color: #9a6b00; }
+  :root[data-theme="dark"] .opp-card .decisao-tag.aguardar { color: #fab219; }
+  .opp-card .decisao-tag.nao-comprar { background: rgba(208,59,59,0.14); color: #d03b3b; }
+  .opp-card details.opp-details { font-size: 12.5px; color: var(--text-secondary); }
+  .opp-card details.opp-details summary {
+    cursor: pointer; font-size: 12px; font-weight: 600; color: var(--series-1);
+    list-style: none; user-select: none;
+  }
+  .opp-card details.opp-details summary::-webkit-details-marker { display: none; }
+  .opp-card details.opp-details summary::before { content: "▸ "; }
+  .opp-card details.opp-details[open] summary::before { content: "▾ "; }
+  .opp-card details.opp-details .obs-box, .opp-card details.opp-details .alert-box { margin-top: 8px; }
 
   .profile-card {
     display: grid;
@@ -589,16 +627,8 @@
     <p class="subsection-note">Como uma oportunidade avança — dos itens encontrados até a venda. Contagens calculadas automaticamente a partir dos dados abaixo e da aba Financeiro.</p>
     <div class="pipeline-flow" id="pipelineFlow"></div>
 
-    <h3 class="subsection-title">📌 Perfil de Compra & Regras</h3>
-    <p class="subsection-note">O que buscar e o que evitar — usado para avaliar toda oportunidade encontrada.</p>
-    <div class="profile-card" id="perfilCompraCard"></div>
-
-    <h3 class="subsection-title">🔍 Metodologia de Pesquisa</h3>
-    <p class="subsection-note">Como cada busca é feita, para ficar rápido e consistente a cada rodada.</p>
-    <div class="profile-card" id="metodologiaCard"></div>
-
     <h3 class="subsection-title">🎯 Painel de Oportunidades</h3>
-    <p class="subsection-note">Relógios encontrados e avaliados contra o perfil de compra, com foto do anúncio original, custo final e margem estimados quando aplicável.</p>
+    <p class="subsection-note">Relógios encontrados, com nota (0–10) e decisão sugerida. Custo final, mercado e detalhes completos ficam em "ver detalhes".</p>
     <div class="opp-card-grid" id="oportunidadesGrid"></div>
 
     <h3 class="subsection-title">📊 Preços de Mercado (OLX Brasil)</h3>
@@ -622,9 +652,18 @@
       </table>
     </div>
 
-    <h3 class="subsection-title">🗂️ Arquitetura do Módulo</h3>
-    <p class="subsection-note">Estrutura completa preparada na planilha (aba Pesquisa_Mercado) para as próximas etapas.</p>
-    <div class="pesquisa-grid" id="pesquisaGrid"></div>
+    <details class="section-collapse">
+      <summary>📌 Perfil de Compra & Regras</summary>
+      <p class="subsection-note">O que buscar e o que evitar — usado para avaliar toda oportunidade encontrada.</p>
+      <div class="profile-card" id="perfilCompraCard"></div>
+    </details>
+
+    <details class="section-collapse">
+      <summary>🔍 Metodologia de Pesquisa</summary>
+      <p class="subsection-note">Como cada busca é feita, para ficar rápido e consistente a cada rodada.</p>
+      <div class="profile-card" id="metodologiaCard"></div>
+    </details>
+
   </section>
 
   <!-- VENDAS -->
@@ -780,6 +819,9 @@
       potencialRevenda: 4300.00,
       margemR: 2162.06,
       margemPct: 101.13,
+      nota: 8.5,
+      decisao: "confirmar",
+      decisaoLabel: "Comprar após confirmar",
       status: "Oportunidade Validada",
       statusClass: "validada",
       link: "https://www.2ndstreet.jp/goods/detail/goodsId/2347920394900/shopsId/31933",
@@ -795,6 +837,9 @@
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
+      nota: 2.0,
+      decisao: "nao-comprar",
+      decisaoLabel: "Não comprar",
       status: "Descartado - Fora do Perfil",
       statusClass: "descartada",
       link: "https://www.2ndstreet.jp/goods/detail/goodsId/2332591892015/shopsId/31894",
@@ -809,6 +854,9 @@
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
+      nota: 6.0,
+      decisao: "aguardar",
+      decisaoLabel: "Aguardar (confirmar mercado)",
       status: "Em Análise",
       statusClass: "candidato",
       link: "https://www.2ndstreet.jp/goods/detail/goodsId/2335004731178/shopsId/31090",
@@ -824,6 +872,9 @@
       potencialRevenda: 3200.00,
       margemR: 1000.00,
       margemPct: 45.45,
+      nota: 8.0,
+      decisao: "comprar",
+      decisaoLabel: "Comprar",
       status: "Oportunidade Validada",
       statusClass: "validada",
       link: "https://rj.olx.com.br/rio-de-janeiro-e-regiao/eletronicos-e-celulares/smartwatches/swatch-x-omega-relogio-bioceramic-moonswatch-mission-to-earth-1521231638",
@@ -1020,8 +1071,19 @@
               <div class="pr-item"><span class="pr-label">Margem Est.</span><span class="pr-value opp-margem">${fmtBRL(o.margemR)} (${o.margemPct.toFixed(1).replace(".", ",")}%)</span></div>
             </div>
           ` : ""}
-          ${o.observacao ? `<div class="obs-box">${o.observacao}</div>` : ""}
-          ${o.alerta ? `<div class="alert-box"><span class="a-icon">⚠️</span><span>${o.alerta}</span></div>` : ""}
+          ${o.nota != null ? `
+            <div class="score-row">
+              <span class="score-badge">${o.nota.toFixed(1).replace(".", ",")}<span class="score-max">/10</span></span>
+              ${o.decisaoLabel ? `<span class="decisao-tag ${o.decisao}">${o.decisaoLabel}</span>` : ""}
+            </div>
+          ` : ""}
+          ${(o.observacao || o.alerta) ? `
+            <details class="opp-details">
+              <summary>ver detalhes</summary>
+              ${o.observacao ? `<div class="obs-box">${o.observacao}</div>` : ""}
+              ${o.alerta ? `<div class="alert-box"><span class="a-icon">⚠️</span><span>${o.alerta}</span></div>` : ""}
+            </details>
+          ` : ""}
           <div class="foot-row">
             ${o.link ? `<a class="opp-link" href="${o.link}" target="_blank" rel="noopener">ver anúncio original ↗</a>` : "<span></span>"}
           </div>
@@ -1147,33 +1209,6 @@
     `).join("");
   }
 
-  // ---- DATA (arquitetura da aba Pesquisa_Mercado — estrutura pronta, sem coleta automática ainda) ----
-  const pesquisaSecoes = [
-    { icon: "🎯", nome: "Oportunidades", desc: "Relógios encontrados (2nd Street, OLX ou Instagram) que batem com o perfil de compra — com custo final e margem estimados.", campos: "Fonte · Marca/Modelo/Ref. · Valor · Estado · Caixa/Certificado/Acessórios · Custo final estimado · Margem estimada · Status" },
-    { icon: "🇧🇷", nome: "Mercado Brasileiro", desc: "Inteligência de preços e oferta na OLX: quanto se pratica, quantos anúncios existem, concorrência por modelo.", campos: "Modelo · Qtd. anúncios · Preço mín/médio/máx · Faixa de negociação · Concorrência" },
-    { icon: "🇯🇵", nome: "Mercado Japonês", desc: "Inteligência de preços no 2nd Street: faixa de valores praticados por modelo, em ienes e convertido.", campos: "Modelo · Qtd. anúncios · Preço mín/médio/máx (¥) · Câmbio · Preço médio estimado (R$)" },
-    { icon: "🔥", nome: "Modelos em Alta", desc: "Modelos que estão aparecendo com mais frequência ou ganhando destaque no Instagram, OLX ou 2nd Street.", campos: "Marca/Modelo · Motivo da alta · Fonte · Frequência de aparição · Faixa de preço" },
-    { icon: "📈", nome: "Histórico de Preços", desc: "Série temporal de preços observados por modelo, para acompanhar a evolução ao longo do tempo.", campos: "Data · Modelo · Mercado (BR/JP) · Preço observado · Fonte" },
-    { icon: "🕵️", nome: "Concorrentes", desc: "Lojas, revendedores e colecionadores monitorados no Instagram e na OLX — o que vendem e a que preço.", campos: "Perfil · Tipo · Plataforma · Modelos que costuma vender · Faixa de preço · Frequência de postagem" },
-    { icon: "👁️", nome: "Relógios Monitorados", desc: "Watchlist de modelos específicos de interesse, com preço-alvo de compra, para agir assim que aparecer uma oportunidade.", campos: "Marca/Modelo/Ref. · Prioridade · Preço-alvo (¥/R$) · Preço médio de mercado · Status" },
-  ];
-
-  function renderPesquisa() {
-    const grid = document.getElementById("pesquisaGrid");
-    if (!grid) return;
-    grid.innerHTML = pesquisaSecoes.map(s => `
-      <div class="pesquisa-card">
-        <div class="head">
-          <span class="icon">${s.icon}</span>
-          <h3>${s.nome}</h3>
-          <span class="badge">estrutura pronta</span>
-        </div>
-        <p>${s.desc}</p>
-        <div class="fields">${s.campos}</div>
-      </div>
-    `).join("");
-  }
-
   function renderEstoque() {
     const emEstoque = relogios.filter(r => r.status !== "Vendido");
     const card = document.getElementById("estoqueCard");
@@ -1248,7 +1283,6 @@
   renderTable();
   renderEstoque();
   renderPatrimonio();
-  renderPesquisa();
   renderPipeline();
   renderPerfilCompra();
   renderMetodologia();

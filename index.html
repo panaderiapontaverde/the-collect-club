@@ -2068,13 +2068,14 @@
 
   // Aprovação/reprovação manual. "Não aprovar" tem dois efeitos:
   // 1) esconde o item na hora, neste navegador, via localStorage (feedback imediato);
-  // 2) abre em nova aba um Google Formulário pré-preenchido com o link do item — ao você
-  //    clicar "Enviar" nesse formulário, a resposta cai numa aba da planilha "The Collect
-  //    Club - Gestão" (aba "Respostas ao formulário 1"), que a automação diária lê e usa
-  //    para marcar a linha correspondente como "Descartado" na planilha oficial. Isso
-  //    funciona vindo de qualquer dispositivo/navegador, não só deste.
+  // 2) envia o link do item direto pro Google Formulário de reprovação em segundo plano
+  //    (POST silencioso pro endpoint formResponse do próprio Google, sem abrir aba nem
+  //    exigir clique extra) — a resposta cai numa aba da planilha "The Collect Club -
+  //    Gestão" (aba "Respostas ao formulário 1"), que a automação diária lê e usa para
+  //    marcar a linha correspondente como "Descartado" na planilha oficial. Isso funciona
+  //    vindo de qualquer dispositivo/navegador, não só deste — um clique só, ponto final.
   const REJEITADOS_KEY = "tcc_rejeitados";
-  const REJEICAO_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfSbzJEFNtEcSuflPOLb3l4z_hIzU6K4KHSxVFM_TzLEsbnzA/viewform";
+  const REJEICAO_FORM_RESPONSE_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfSbzJEFNtEcSuflPOLb3l4z_hIzU6K4KHSxVFM_TzLEsbnzA/formResponse";
   const REJEICAO_FORM_ENTRY_LINK = "entry.227578697";
 
   function oportunidadeId(o) {
@@ -2092,12 +2093,20 @@
       localStorage.setItem(REJEITADOS_KEY, JSON.stringify(atuais));
     }
     renderOportunidades();
-    // Envia o link para o Google Formulário de reprovação, pra a automação diária
-    // conseguir refletir isso na planilha independente do dispositivo/navegador usado aqui.
+    // Envia o link pro Google Formulário em segundo plano (POST direto no endpoint
+    // formResponse, igual o próprio formulário faz ao clicar "Enviar" — sem redirecionar
+    // nem abrir aba nova). "no-cors" é necessário porque o Google não libera CORS nesse
+    // endpoint pra domínios externos; a resposta fica opaca, mas o envio é registrado.
     try {
-      const formUrl = REJEICAO_FORM_URL + "?usp=pp_url&" + REJEICAO_FORM_ENTRY_LINK + "=" + encodeURIComponent(id);
-      window.open(formUrl, "_blank", "noopener");
-    } catch (e) { /* se o pop-up for bloqueado, a marcação local já foi feita */ }
+      const body = new URLSearchParams();
+      body.set(REJEICAO_FORM_ENTRY_LINK, id);
+      fetch(REJEICAO_FORM_RESPONSE_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: body.toString(),
+      }).catch(() => { /* falha de rede silenciosa — a marcação local já foi feita */ });
+    } catch (e) { /* navegador sem fetch/URLSearchParams — a marcação local já foi feita */ }
   }
 
   // Oportunidades ativas: exclui itens descartados (fora do perfil), já vendidos/encerrados,
@@ -2188,7 +2197,7 @@
             </details>
           ` : ""}
           <div class="decision-row">
-            <button type="button" class="btn-decision btn-reject" onclick="rejeitarOportunidade('${idAttr}')" title="Abre um formulário rápido em outra aba — clique em Enviar lá para também remover da planilha">✕ Não aprovar</button>
+            <button type="button" class="btn-decision btn-reject" onclick="rejeitarOportunidade('${idAttr}')" title="Remove daqui e avisa a planilha automaticamente, sem passo extra">✕ Não aprovar</button>
           </div>
           <div class="foot-row">
             ${o.link ? `<a class="opp-link" href="${o.link}" target="_blank" rel="noopener">ver anúncio original ↗</a>` : "<span></span>"}

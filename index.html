@@ -262,6 +262,15 @@
   .opp-card .title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
   .opp-card h4 { font-size: 14.5px; font-weight: 600; margin: 0; color: var(--text-primary); line-height: 1.35; }
   .opp-card .fonte { font-size: 12px; color: var(--text-muted); }
+  .opp-card .specs-row { display: flex; flex-wrap: wrap; gap: 5px; }
+  .opp-card .specs-badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 999px; padding: 2px 9px; font-size: 11px; color: var(--text-secondary);
+    white-space: nowrap;
+  }
+  .opp-card .specs-badge-good { border-color: var(--success-text); color: var(--success-text); }
+  .opp-card .specs-badge-alert { border-color: #d9822b; color: #d9822b; }
   .opp-card .price-row { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 12.5px; }
   .opp-card .price-row .pr-item .pr-label { color: var(--text-muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.02em; display: block; margin-bottom: 2px; }
   .opp-card .price-row .pr-item .pr-value { font-variant-numeric: tabular-nums; font-weight: 600; }
@@ -1031,7 +1040,14 @@
 {
       relogio: "Seiko Prospex Save the Ocean",
       sku: "6R35-01V0",
-      dataIdentificacao: "2026-08-08",
+      estado: "Usado B",
+      caixaMm: 44,
+      pulsoCm: null,
+      pulsoTexto: "ajustável até 20cm (a confirmar se reduz a 18,5cm)",
+      elos: null,
+      caixaOriginal: null,
+      pulseiraOriginal: null,
+            dataIdentificacao: "2026-08-08",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/233983/49/11359/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233983/49/11359/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233983/49/11359/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233983/49/11359/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233983/49/11359/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233983/49/11359/6.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233983/49/11359/7.jpg"],
       valorAnunciado: "¥93.390 (R$3.053,85)",
@@ -1051,7 +1067,14 @@
 {
       relogio: "TAG Heuer Fórmula 1",
       sku: "WAC1110-0",
-      dataIdentificacao: "2026-08-09",
+      estado: "Usado B",
+      caixaMm: 45,
+      pulsoCm: 18.5,
+      pulsoTexto: null,
+      elos: "retos",
+      caixaOriginal: null,
+      pulseiraOriginal: null,
+            dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/33314/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/33314/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/33314/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/33314/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/33314/5.jpg"],
       valorAnunciado: "¥65.890 (R$2.154,60)",
@@ -1071,7 +1094,14 @@
 {
       relogio: "TAG Heuer Fórmula 1",
       sku: "WAZ111A",
-      dataIdentificacao: "2026-08-09",
+      estado: "Usado B",
+      caixaMm: 46,
+      pulsoCm: 20.5,
+      pulsoTexto: null,
+      elos: "retos",
+      caixaOriginal: null,
+      pulseiraOriginal: null,
+            dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/25388/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/25388/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/25388/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/25388/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/25388/5.jpg"],
       valorAnunciado: "¥126.390 (R$4.132,95)",
@@ -1091,7 +1121,14 @@
 {
       relogio: "TAG Heuer Aquaracer",
       sku: "—",
-      dataIdentificacao: "2026-08-09",
+      estado: "Usado B",
+      caixaMm: 50,
+      pulsoCm: 21.5,
+      pulsoTexto: null,
+      elos: "retos",
+      caixaOriginal: null,
+      pulseiraOriginal: null,
+            dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/40398/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/40398/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/40398/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/40398/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/40398/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/40398/6.jpg"],
       valorAnunciado: "¥153.890 (R$5.032,20)",
@@ -1111,7 +1148,14 @@
 {
       relogio: "TAG Heuer Fórmula 1",
       sku: "CAH1111",
-      dataIdentificacao: "2026-08-09",
+      estado: "Usado B",
+      caixaMm: 45,
+      pulsoCm: 21,
+      pulsoTexto: null,
+      elos: "cushion",
+      caixaOriginal: null,
+      pulseiraOriginal: null,
+            dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39958/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39958/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39958/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39958/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39958/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39958/6.jpg"],
       valorAnunciado: "¥142.890 (R$4.672,50)",
@@ -1131,7 +1175,14 @@
 {
       relogio: "TAG Heuer Aquaracer 300M Calibre 16",
       sku: "CAY2110.BA0927",
-      dataIdentificacao: "2026-08-09",
+      estado: "Usado B",
+      caixaMm: 48,
+      pulsoCm: 19.5,
+      pulsoTexto: null,
+      elos: "retos",
+      caixaOriginal: null,
+      pulseiraOriginal: null,
+            dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39279/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39279/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39279/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39279/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39279/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39279/6.jpg"],
       valorAnunciado: "¥208.890 (R$6.830,70)",
@@ -1171,7 +1222,14 @@
 {
       relogio: "TAG Heuer Fórmula 1 (pulseira de borracha)",
       sku: "WAZ1110.FT8023",
-      dataIdentificacao: "2026-08-09",
+      estado: "Usado B",
+      caixaMm: 41,
+      pulsoCm: null,
+      pulsoTexto: "não informado (pulseira de borracha)",
+      elos: "n/a",
+      caixaOriginal: null,
+      pulseiraOriginal: "nao",
+            dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/36889/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/36889/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/36889/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/36889/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/36889/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/36889/6.jpg"],
       valorAnunciado: "¥120.890 (R$3.953,10)",
@@ -1191,7 +1249,14 @@
 {
       relogio: "TAG Heuer Fórmula 1",
       sku: "CAZ1011",
-      dataIdentificacao: "2026-08-09",
+      estado: "Usado B",
+      caixaMm: 48,
+      pulsoCm: 20,
+      pulsoTexto: null,
+      elos: "retos",
+      caixaOriginal: "sim",
+      pulseiraOriginal: null,
+            dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37084/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37084/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37084/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37084/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37084/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37084/6.jpg"],
       valorAnunciado: "¥142.890 (R$4.672,50)",
@@ -1271,7 +1336,14 @@
 {
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico, correia social/aftermarket)",
-      dataIdentificacao: "2026-08-09",
+      estado: "Usado B",
+      caixaMm: 38,
+      pulsoCm: 18,
+      pulsoTexto: null,
+      elos: "n/a",
+      caixaOriginal: null,
+      pulseiraOriginal: "nao",
+            dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/234780/17/27513/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234780/17/27513/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234780/17/27513/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234780/17/27513/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234780/17/27513/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234780/17/27513/6.jpg"],
       valorAnunciado: "¥32.890 (R$1.075,50)",
@@ -1351,7 +1423,14 @@
 {
       relogio: "TAG Heuer Aquaracer",
       sku: "WBP1110",
-      dataIdentificacao: "2026-08-09",
+      estado: "Usado C",
+      caixaMm: 45,
+      pulsoCm: 18.5,
+      pulsoTexto: null,
+      elos: "retos",
+      caixaOriginal: null,
+      pulseiraOriginal: null,
+            dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37626/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37626/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37626/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37626/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37626/5.jpg"],
       valorAnunciado: "¥219.890 (R$7.190,40)",
@@ -1591,7 +1670,14 @@
 {
       relogio: "TAG Heuer Aquaracer Chronograph",
       sku: "mostrador azul-marinho, referência exata não impressa no anúncio",
-      dataIdentificacao: "2026-08-09",
+      estado: "Usado B",
+      caixaMm: 48,
+      pulsoCm: 19,
+      pulsoTexto: null,
+      elos: "retos",
+      caixaOriginal: null,
+      pulseiraOriginal: null,
+            dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23506/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23506/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23506/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23506/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23506/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23506/6.jpg"],
       valorAnunciado: "¥142.890 (R$4.672,50)",
@@ -1611,7 +1697,14 @@
 {
       relogio: "TAG Heuer Aquaracer",
       sku: "CAY1110",
-      dataIdentificacao: "2026-08-09",
+      estado: "Usado B",
+      caixaMm: 50,
+      pulsoCm: 18,
+      pulsoTexto: null,
+      elos: "retos",
+      caixaOriginal: null,
+      pulseiraOriginal: null,
+            dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/231986/82/46474/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231986/82/46474/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231986/82/46474/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231986/82/46474/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231986/82/46474/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231986/82/46474/6.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231986/82/46474/7.jpg"],
       valorAnunciado: "¥153.890 (R$5.032,20)",
@@ -1631,7 +1724,14 @@
 {
       relogio: "TAG Heuer Aquaracer (mostrador vermelho/bordô)",
       sku: "WBP2114-0",
-      dataIdentificacao: "2026-08-09",
+      estado: "Usado B",
+      caixaMm: 45,
+      pulsoCm: 20,
+      pulsoTexto: null,
+      elos: "retos",
+      caixaOriginal: null,
+      pulseiraOriginal: null,
+            dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23049/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23049/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23049/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23049/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23049/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23049/6.jpg"],
       valorAnunciado: "¥281.490 (R$9.204,72)",
@@ -1651,7 +1751,14 @@
 {
       relogio: "TAG Heuer Link (referência CAT2017)",
       sku: "CAT2017",
-      dataIdentificacao: "2026-08-09",
+      estado: "Usado B",
+      caixaMm: 47,
+      pulsoCm: 20,
+      pulsoTexto: null,
+      elos: null,
+      caixaOriginal: null,
+      pulseiraOriginal: null,
+            dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23636/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23636/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23636/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23636/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23636/5.jpg"],
       valorAnunciado: "¥219.890 (R$7.190,40)",
@@ -1711,7 +1818,14 @@
 {
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
-      dataIdentificacao: "2026-08-09",
+      estado: "Usado C",
+      caixaMm: 48,
+      pulsoCm: 21,
+      pulsoTexto: null,
+      elos: "retos",
+      caixaOriginal: null,
+      pulseiraOriginal: null,
+            dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/20949/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/20949/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/20949/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/20949/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/20949/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/20949/6.jpg"],
       valorAnunciado: "¥142.989 (R$4.675,74)",
@@ -1912,7 +2026,14 @@
       relogio: "Omega x Swatch MoonSwatch Mission to Earth",
       dataIdentificacao: "2026-08-06",
       fonte: "OLX Brasil",
-      imagens: ["https://img.olx.com.br/images/49/490601667145785.jpg"],
+      estado: "Usado - Excelente",
+      caixaMm: null,
+      pulsoCm: null,
+      pulsoTexto: null,
+      elos: null,
+      caixaOriginal: "sim",
+      pulseiraOriginal: "nao",
+            imagens: ["https://img.olx.com.br/images/49/490601667145785.jpg"],
       valorAnunciado: "R$2.200 (compra nacional)",
       custoFinal: 2200.00,
       potencialRevenda: 3200.00,
@@ -2258,6 +2379,44 @@
     });
   }
 
+  // Selos de especificação rápida do relógio (estado, caixa, pulso, elos, caixa/pulseira original)
+  // Mostrados sempre visíveis no card, sem precisar abrir "ver detalhes".
+  function buildSpecsRow(o) {
+    const badges = [];
+    if (o.estado) {
+      const estadoClass = /Usado C|Usado D/i.test(o.estado) ? " specs-badge-alert" : "";
+      badges.push(`<span class="specs-badge${estadoClass}">🏷️ ${o.estado}</span>`);
+    }
+    if (o.caixaMm != null) {
+      badges.push(`<span class="specs-badge">📐 Caixa ${o.caixaMm}mm</span>`);
+    }
+    if (o.pulsoCm != null) {
+      badges.push(`<span class="specs-badge">⌚ Pulso ${o.pulsoCm.toFixed(1).replace(".0", "").replace(".", ",")}cm</span>`);
+    } else if (o.pulsoTexto) {
+      badges.push(`<span class="specs-badge">⌚ Pulso: ${o.pulsoTexto}</span>`);
+    }
+    if (o.elos) {
+      const label = o.elos === "retos" ? "Elos retos"
+        : o.elos === "cushion" ? "Elos cushion/arredondados"
+        : o.elos === "n/a" ? "Pulseira não é de elos"
+        : "Elos: " + o.elos;
+      const elosClass = o.elos === "cushion" ? " specs-badge-alert" : "";
+      badges.push(`<span class="specs-badge${elosClass}">🔗 ${label}</span>`);
+    }
+    if (o.caixaOriginal != null) {
+      badges.push(o.caixaOriginal === "sim"
+        ? `<span class="specs-badge specs-badge-good">📦 Com caixa original</span>`
+        : `<span class="specs-badge">📦 Sem caixa original</span>`);
+    }
+    if (o.pulseiraOriginal != null) {
+      badges.push(o.pulseiraOriginal === "sim"
+        ? `<span class="specs-badge specs-badge-good">⛓️ Pulseira original</span>`
+        : `<span class="specs-badge">⛓️ Pulseira não original</span>`);
+    }
+    if (!badges.length) return "";
+    return `<div class="specs-row">${badges.join("")}</div>`;
+  }
+
   function renderOportunidades() {
     const grid = document.getElementById("oportunidadesGrid");
     if (!grid) return;
@@ -2289,6 +2448,7 @@
             <span class="opp-status ${o.statusClass}">${o.status}</span>
           </div>
           <div class="fonte">${o.sku ? `<span class="opp-sku">SKU ${o.sku}</span> · ` : ""}${o.fonte} · ${o.valorAnunciado}${idadeLabel(o.dataIdentificacao) ? ` · <span class="opp-idade">${idadeLabel(o.dataIdentificacao)}</span>` : ""}</div>
+          ${buildSpecsRow(o)}
           ${o.custoFinal !== null ? `
             <div class="price-row">
               <div class="pr-item"><span class="pr-label">Preço Final Estimado (BR)</span><span class="pr-value">${fmtBRL(o.custoFinal)}</span></div>

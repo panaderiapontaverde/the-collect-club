@@ -2385,13 +2385,13 @@
       margemR: null,
       margemPct: null,
       nota: null,
-      decisao: "comprar",
-      decisaoLabel: "Comprar",
-      status: "Em Análise",
-      statusClass: "candidato",
+      decisao: "nao-comprar",
+      decisaoLabel: "Não comprar",
+      status: "Descartado - Fora do Perfil",
+      statusClass: "descartada",
       link: "https://jp.mercari.com/shops/product/2JUtKTuTQ2G98oV4UcSDZX",
-      observacao: "<strong>Loja Mercari Shops (09/08/2026), apenas 1 unidade disponível.</strong> Quartzo, cronógrafo Fórmula 1 edição especial 'Soccer', mostrador preto, caixa em aço inoxidável, pulseira de borracha (não trançada), resistência 200m. Caixa aproximadamente 43mm, pulso aproximadamente 21cm. Sem acessórios (apenas a unidade principal). Estado declarado bom/excelente.",
-      alerta: null
+      observacao: "<strong>Loja Mercari Shops (09/08/2026), apenas 1 unidade disponível.</strong> Quartzo, cronógrafo Fórmula 1 edição especial 'Soccer', mostrador preto, caixa em aço inoxidável, pulseira de borracha (não trançada), resistência 200m. Caixa aproximadamente 43mm, pulso aproximadamente 21cm. Sem acessórios (apenas a unidade principal). Estado declarado bom/excelente.<br><br><strong>Descartado em 09/08/2026 (a pedido do usuário):</strong> é uma edição especial/limitada ('Soccer'), e o usuário definiu que não gosta de relógios de edição limitada. Motivo de descarte: edição limitada — não é sobre preço, estado ou pulseira.",
+      alerta: "Reclassificado como descartado por ser edição especial/limitada — critério de preferência do usuário (09/08/2026)."
     },
     {
       relogio: "TAG Heuer Formula 1 Chronograph (mostrador amarelo)",
@@ -2422,13 +2422,13 @@
       margemR: null,
       margemPct: null,
       nota: null,
-      decisao: "comprar",
-      decisaoLabel: "Comprar",
-      status: "Em Análise",
-      statusClass: "candidato",
+      decisao: "nao-comprar",
+      decisaoLabel: "Não comprar",
+      status: "Descartado - Fora do Perfil",
+      statusClass: "descartada",
       link: "https://jp.mercari.com/shops/product/2JUtbtTchkuSjT6LKyjxZX",
-      observacao: "<strong>Loja Mercari Shops 'Lojas Otakaraya Mercari' (09/08/2026), SKU 6wha0031, apenas 1 unidade disponível.</strong> Quartzo, cronógrafo Fórmula 1, mostrador amarelo, luneta taquímetro preta, caixa em aço inoxidável, pulseira de borracha amarela (não trançada). Caixa 43mm, pulso 21cm. Garantia datada de abril de 2023 (vencida - valor documental). Condição declarada 'muito bom'.",
-      alerta: null
+      observacao: "<strong>Loja Mercari Shops 'Lojas Otakaraya Mercari' (09/08/2026), SKU 6wha0031, apenas 1 unidade disponível.</strong> Quartzo, cronógrafo Fórmula 1, mostrador amarelo, luneta taquímetro preta, caixa em aço inoxidável, pulseira de borracha amarela (não trançada). Caixa 43mm, pulso 21cm. Garantia datada de abril de 2023 (vencida - valor documental). Condição declarada 'muito bom'.<br><br><strong>Descartado em 09/08/2026 (a pedido do usuário):</strong> mostrador amarelo — o usuário não gosta de relógios com mostrador amarelo. Motivo de descarte: cor do mostrador — não é sobre preço, estado ou pulseira.",
+      alerta: "Reclassificado como descartado por cor do mostrador (amarelo) — critério de preferência do usuário (09/08/2026)."
     }
 ];
 
@@ -2488,6 +2488,18 @@
       tipo: "lista",
       itens: [
         { texto: "Elos arredondados/cushion (estilo \"osso\", tipo S/el) — identificado no WG1113-0 e no CAH1111 (ambos posteriormente descartados)", ruim: true },
+        { texto: "Pulseira trançada/\"transada\" (estilo entrelaçado, não confundir com jubilee) — decisão de 09/08/2026, identificado no WG5113-P0 (descartado). Preferir oyster/elos sólidos ou correia de borracha/couro.", ruim: true },
+      ],
+    },
+    {
+      icon: "🎨",
+      titulo: "Restrição estética",
+      tag: "Não comprar se",
+      categoria: "restricao",
+      tipo: "lista",
+      itens: [
+        { texto: "Mostrador amarelo — decisão de 09/08/2026, identificado no CAZ101AM (descartado)", ruim: true },
+        { texto: "Edição especial/limitada (ex: \"Soccer Special Edition\", coleções comemorativas numeradas) — decisão de 09/08/2026, identificado no WAZ1015 (descartado)", ruim: true },
       ],
     },
     {
@@ -2505,6 +2517,25 @@
 
   // ---- DATA (Metodologia de Pesquisa — padronizada a partir das buscas realizadas) ----
   const metodologiaPesquisa = [
+    {
+      icon: "🧠",
+      titulo: "Registro de motivo de descarte (aprendizado de preferências)",
+      tipo: "lista",
+      itens: [
+        "Toda vez que um item é descartado, o motivo específico é registrado na observação (ex: \"cor do mostrador\", \"edição limitada\", \"pulseira trançada\", \"caixa abaixo do mínimo\") — nunca só \"não aprovado\".",
+        "Quando o motivo revela uma preferência nova (estética, tipo de pulseira, edição limitada, etc.), ela vira um critério permanente de exclusão no Perfil de Compra acima, pra otimizar buscas futuras automaticamente.",
+        "Itens já registrados que passam a violar uma preferência nova (definida depois deles serem aprovados) são reclassificados como \"Descartado\" com o motivo explicado, mesmo que já tenham sido publicados antes — decisão de 09/08/2026, aplicado a WAZ1015 e CAZ101AM.",
+      ],
+    },
+    {
+      icon: "🇯🇵",
+      titulo: "Mercari Japão — TAG Heuer",
+      tipo: "lista",
+      itens: [
+        "Fase 1 (pente fino único, em andamento): varrer todas as páginas de busca pela marca (\"TAG Heuer\") sem filtro de data, item por item, pra esgotar o catálogo atual uma única vez.",
+        "Fase 2 (rotina diária, a partir de quando a Fase 1 terminar): buscar só pelo nome da marca com filtro \"mais recentes\"/\"novo\" (postados recentemente) e revisar apenas os itens novos desde a última passada — não repetir itens já vistos.",
+      ],
+    },
     {
       icon: "🇯🇵",
       titulo: "2nd Street Japão",

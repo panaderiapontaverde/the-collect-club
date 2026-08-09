@@ -350,7 +350,7 @@
     display: flex; align-items: center; gap: 2px;
   }
 
-  /* Aprovar / Não aprovar action row */
+  /* Não aprovar action row */
   .opp-card .decision-row { display: flex; gap: 6px; margin-top: 2px; }
   .opp-card .btn-decision {
     flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 4px;
@@ -358,9 +358,7 @@
     border: 1px solid var(--border); cursor: pointer; background: var(--page-plane);
     color: var(--text-primary); transition: background 0.12s ease, border-color 0.12s ease;
   }
-  .opp-card .btn-approve:hover { background: rgba(12,163,12,0.14); border-color: rgba(12,163,12,0.4); color: var(--success-text); }
   .opp-card .btn-reject:hover { background: rgba(208,59,59,0.14); border-color: rgba(208,59,59,0.4); color: #d03b3b; }
-  .opp-card .btn-approve.is-approved { background: rgba(12,163,12,0.16); border-color: rgba(12,163,12,0.4); color: var(--success-text); }
 
   /* Lightbox / gallery modal */
   .lightbox-overlay {
@@ -2076,7 +2074,6 @@
   //    para marcar a linha correspondente como "Descartado" na planilha oficial. Isso
   //    funciona vindo de qualquer dispositivo/navegador, não só deste.
   const REJEITADOS_KEY = "tcc_rejeitados";
-  const APROVADOS_KEY = "tcc_aprovados";
   const REJEICAO_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfSbzJEFNtEcSuflPOLb3l4z_hIzU6K4KHSxVFM_TzLEsbnzA/viewform";
   const REJEICAO_FORM_ENTRY_LINK = "entry.227578697";
 
@@ -2085,10 +2082,6 @@
   }
   function getRejeitados() {
     try { return JSON.parse(localStorage.getItem(REJEITADOS_KEY) || "[]"); }
-    catch (e) { return []; }
-  }
-  function getAprovados() {
-    try { return JSON.parse(localStorage.getItem(APROVADOS_KEY) || "[]"); }
     catch (e) { return []; }
   }
   function rejeitarOportunidade(idEncoded) {
@@ -2105,15 +2098,6 @@
       const formUrl = REJEICAO_FORM_URL + "?usp=pp_url&" + REJEICAO_FORM_ENTRY_LINK + "=" + encodeURIComponent(id);
       window.open(formUrl, "_blank", "noopener");
     } catch (e) { /* se o pop-up for bloqueado, a marcação local já foi feita */ }
-  }
-  function aprovarOportunidade(idEncoded) {
-    const id = decodeURIComponent(idEncoded);
-    const atuais = getAprovados();
-    if (!atuais.includes(id)) {
-      atuais.push(id);
-      localStorage.setItem(APROVADOS_KEY, JSON.stringify(atuais));
-    }
-    renderOportunidades();
   }
 
   // Oportunidades ativas: exclui itens descartados (fora do perfil), já vendidos/encerrados,
@@ -2163,13 +2147,11 @@
     const grid = document.getElementById("oportunidadesGrid");
     if (!grid) return;
     const ativas = oportunidadesAtivas();
-    const aprovados = getAprovados();
     renderOportunidadesSummary(ativas);
     grid.innerHTML = ativas.map((o, idx) => {
       const imagens = Array.isArray(o.imagens) ? o.imagens : [];
       const id = oportunidadeId(o);
       const idAttr = encodeURIComponent(id);
-      const isApproved = aprovados.includes(id);
       return `
       <div class="opp-card">
         <div class="photo-wrap" ${imagens.length ? `onclick="abrirGaleria(${idx})"` : ""}>
@@ -2206,7 +2188,6 @@
             </details>
           ` : ""}
           <div class="decision-row">
-            <button type="button" class="btn-decision btn-approve${isApproved ? " is-approved" : ""}" onclick="aprovarOportunidade('${idAttr}')">${isApproved ? "✓ Aprovado" : "✓ Aprovar"}</button>
             <button type="button" class="btn-decision btn-reject" onclick="rejeitarOportunidade('${idAttr}')" title="Abre um formulário rápido em outra aba — clique em Enviar lá para também remover da planilha">✕ Não aprovar</button>
           </div>
           <div class="foot-row">

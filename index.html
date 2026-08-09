@@ -310,6 +310,23 @@
     font-variant-numeric: tabular-nums;
   }
   .opp-summary-label { font-size: 11.5px; color: var(--text-muted); }
+  .opp-filters {
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px; margin-bottom: 8px;
+  }
+  .opp-filter-item { display: flex; flex-direction: column; gap: 3px; min-width: 130px; }
+  .opp-filter-item label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; }
+  .opp-filter-item select, .opp-filter-item input {
+    background: var(--surface-2, var(--surface-1)); color: var(--text-primary);
+    border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; font-size: 13px;
+  }
+  .opp-filter-clear {
+    background: transparent; color: var(--text-muted); border: 1px solid var(--border);
+    border-radius: 6px; padding: 6px 12px; font-size: 12.5px; cursor: pointer; height: 32px;
+  }
+  .opp-filter-clear:hover { color: var(--text-primary); border-color: var(--text-muted); }
+  .opp-filter-count { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
   .opp-card .score-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .opp-card .score-badge {
     display: inline-flex; align-items: baseline; gap: 3px;
@@ -734,6 +751,38 @@
 
     <h3 class="subsection-title">🎯 Oportunidades</h3>
     <div class="opp-summary" id="oportunidadesSummary"></div>
+
+    <div class="opp-filters" id="oportunidadesFiltros">
+      <div class="opp-filter-item">
+        <label for="filtroDecisao">Status</label>
+        <select id="filtroDecisao">
+          <option value="todas">Todas</option>
+          <option value="prontas">Prontas para comprar</option>
+          <option value="confirmar">Aguardando confirmação</option>
+        </select>
+      </div>
+      <div class="opp-filter-item">
+        <label for="filtroPrecoMax">Preço final até (R$)</label>
+        <input type="number" id="filtroPrecoMax" min="0" step="100" placeholder="sem limite">
+      </div>
+      <div class="opp-filter-item">
+        <label for="filtroBusca">Buscar</label>
+        <input type="text" id="filtroBusca" placeholder="modelo, referência, SKU...">
+      </div>
+      <div class="opp-filter-item">
+        <label for="filtroOrdenar">Ordenar por</label>
+        <select id="filtroOrdenar">
+          <option value="recentes">Mais recentes</option>
+          <option value="preco-asc">Preço final: menor primeiro</option>
+          <option value="preco-desc">Preço final: maior primeiro</option>
+          <option value="margem-desc">Melhor margem estimada</option>
+          <option value="nota-desc">Melhor nota</option>
+        </select>
+      </div>
+      <button type="button" class="opp-filter-clear" id="filtroLimpar">Limpar filtros</button>
+    </div>
+    <div class="opp-filter-count" id="oportunidadesFiltroCount"></div>
+
     <div class="opp-card-grid" id="oportunidadesGrid"></div>
 
     <div class="lightbox-overlay" id="lightboxOverlay">
@@ -920,7 +969,7 @@
 
   // ---- DATA (snapshot manual da aba Pesquisa_Mercado > Oportunidades) ----
   const oportunidades = [
-    {
+{
       relogio: "TAG Heuer Professional 200 Meters",
       sku: "WG1113-0",
       dataIdentificacao: "2026-08-05",
@@ -940,14 +989,14 @@
       observacao: "<strong>Melhor compatibilidade com o perfil</strong> (caixa ≥38mm / pulseira ~18,5cm) entre os itens encontrados: caixa aprox. 42x37mm (dentro do perfil) e pulso de 18cm — bem próximo do alvo. Estado Usado B, sem menção de caixa/certificado no anúncio. Custo final calculado pelo motor calibrado (comissão 20%, frete internacional 4,2%, imposto 9,6% sobre subtotal, câmbio automático via GOOGLEFINANCE — ver aba Pesquisa_Mercado), sem incluir eventual polimento de R$150. Potencial de revenda baseado em 2 anúncios de \"200 meters\" no OLX (R$4.800-4.850) — margem estimada acima de 120%.<br><br><strong>Reclassificado em 09/08/2026:</strong> reprovado manualmente por você através do botão Não aprovar no site.",
       alerta: "<strong>Nota (06/08/2026):</strong> pulseira em elos arredondados/cushion (estilo \"osso\", tipo S/el) — João revisou fotos e informou que não é o tipo de pulseira que mais gosta, mas mantém a oportunidade validada pela margem alta.",
     },
-    {
+{
       relogio: "TAG Heuer Aquaracer",
       sku: "WBD1311",
       dataIdentificacao: "2026-08-05",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/233259/18/92015/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233259/18/92015/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233259/18/92015/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233259/18/92015/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233259/18/92015/5.jpg"],
       valorAnunciado: "¥76.890 (R$2.514,30)",
-      custoFinal: null,
+      custoFinal: 3371.53,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -959,14 +1008,14 @@
       link: "https://www.2ndstreet.jp/goods/detail/goodsId/2332591892015/shopsId/31894",
       observacao: "<strong>Fora do perfil de compra.</strong> Após definição do perfil (caixa ≥38mm / pulseira ~18,5cm), este item não é compatível: pulso de apenas 14cm indica versão feminina/reduzida — o problema é o pulso, não a caixa. Estado Usado B, caixa incluída, pulseira em aço com marcas de uso (arranhões). Registrado inicialmente como teste da Pesquisa de Mercado antes do perfil estar definido.",
     },
-    {
+{
       relogio: "Seiko Prospex Solar",
       sku: "V192-0AF0",
       dataIdentificacao: "2026-08-06",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/233500/47/31178/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233500/47/31178/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233500/47/31178/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233500/47/31178/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233500/47/31178/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233500/47/31178/6.jpg"],
       valorAnunciado: "¥43.890 (R$1.435,20)",
-      custoFinal: null,
+      custoFinal: 1924.52,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -979,14 +1028,14 @@
       observacao: "<strong>Novo tipo de interesse do João.</strong> Seiko Prospex — estado Usado B, caixa aprox. 40-43mm (medida do site: 4,0x4,3cm), sem menção de caixa/certificado. Custo estimado pelo motor calibrado (comissão 20%, frete internacional 4,2%, imposto 9,6% sobre subtotal, câmbio automático) = R$1.924,52, sem contar eventual polimento. Critério de decisão é o encaixe físico, não o preço de revenda — a pesquisa de mercado no OLX fica só como referência de margem, não bloqueia a compra.<br><br><strong>Reclassificado em 09/08/2026:</strong> reprovado manualmente por você através do botão Não aprovar no site.",
       alerta: "<strong>Pendente:</strong> o anúncio não informa o comprimento da pulseira (alvo: ~18,5cm) — a caixa (40-43mm) está dentro do perfil (mínimo 38mm, sem limite máximo), então o único ponto pendente é confirmar a pulseira.",
     },
-    {
+{
       relogio: "Seiko Prospex Save the Ocean",
       sku: "6R35-01V0",
       dataIdentificacao: "2026-08-08",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/233983/49/11359/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233983/49/11359/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233983/49/11359/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233983/49/11359/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233983/49/11359/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233983/49/11359/6.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233983/49/11359/7.jpg"],
       valorAnunciado: "¥93.390 (R$3.053,85)",
-      custoFinal: null,
+      custoFinal: 4095.03,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -999,14 +1048,14 @@
       observacao: "<strong>Novo achado (08/08/2026), busca ao vivo.</strong> Seiko Prospex Save the Ocean — estado Usado B, caixa 4,4cm (44mm), pulso ajustável até 20cm. Custo final calculado pelo motor calibrado (comissão 20%, frete internacional 4,2%, imposto 9,6% sobre subtotal, câmbio automático) = R$4.095,03. Ainda sem pesquisa de revenda, porque o encaixe físico decide primeiro.",
       alerta: "<strong>Atenção ao tamanho:</strong> a caixa de 44mm está dentro do perfil (mínimo 38mm, sem limite máximo) — não é mais um problema. O ponto de atenção real é a pulseira: anúncio diz \"ajustável até 20cm\", falta confirmar se reduz até os ~18,5cm-alvo. Preço também é o mais alto entre os candidatos Seiko. Precisa da sua avaliação das fotos antes de qualquer decisão.",
     },
-    {
+{
       relogio: "TAG Heuer Fórmula 1",
       sku: "WAC1110-0",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/33314/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/33314/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/33314/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/33314/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/33314/5.jpg"],
       valorAnunciado: "¥65.890 (R$2.154,60)",
-      custoFinal: null,
+      custoFinal: 2889.19,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1019,14 +1068,14 @@
       observacao: "<strong>Achado via busca por marca (09/08/2026), corrigindo falha de busca por modelo em inglês.</strong> Caixa 45mm, pulso de 18,5cm — o melhor encaixe de pulseira entre os candidatos atuais, exatamente no alvo. Preço mais baixo do lote. Estado Usado B. Ainda sem pesquisa de revenda.",
       alerta: "Falta confirmar nas fotos se a pulseira tem elos retos ou arredondados (cushion) — restrição conhecida do João.",
     },
-    {
+{
       relogio: "TAG Heuer Fórmula 1",
       sku: "WAZ111A",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/25388/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/25388/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/25388/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/25388/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/25388/5.jpg"],
       valorAnunciado: "¥126.390 (R$4.132,95)",
-      custoFinal: null,
+      custoFinal: 5542.04,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1039,14 +1088,14 @@
       observacao: "<strong>Achado via busca por marca (09/08/2026).</strong> Caixa 46mm (dentro do perfil). Pulso de 20,5cm — maior que o alvo de 18,5cm, mas pulseiras de aço costumam reduzir removendo elos. Estado Usado B. Ainda sem pesquisa de revenda.",
       alerta: "Falta confirmar se a pulseira reduz até 18,5cm e se os elos são retos ou arredondados (cushion).",
     },
-    {
+{
       relogio: "TAG Heuer Aquaracer",
       sku: "—",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/40398/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/40398/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/40398/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/40398/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/40398/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/40398/6.jpg"],
       valorAnunciado: "¥153.890 (R$5.032,20)",
-      custoFinal: null,
+      custoFinal: 6747.88,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1059,14 +1108,14 @@
       observacao: "<strong>Achado via busca por marca (09/08/2026).</strong> Sem referência visível no anúncio. Caixa 50mm (dentro do perfil), automático recém revisado pela loja (precisão +7s/dia). Pulso de 21,5cm — bem acima do alvo. É o mais caro do lote entre os que seguem sem revenda pesquisada. Estado Usado B.",
       alerta: "Falta confirmar se a pulseira reduz o suficiente até 18,5cm e se os elos são retos ou arredondados (cushion).",
     },
-    {
+{
       relogio: "TAG Heuer Fórmula 1",
       sku: "CAH1111",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39958/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39958/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39958/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39958/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39958/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39958/6.jpg"],
       valorAnunciado: "¥142.890 (R$4.672,50)",
-      custoFinal: null,
+      custoFinal: 6265.55,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1079,14 +1128,14 @@
       observacao: "<strong>Achado via busca por marca (09/08/2026).</strong> Caixa 45mm (dentro do perfil). Pulso de 21cm — acima do alvo, mas pulseira de aço costuma reduzir. Estado Usado B. Ainda sem pesquisa de revenda.",
       alerta: "Falta confirmar se a pulseira reduz até 18,5cm e se os elos são retos ou arredondados (cushion).",
     },
-    {
+{
       relogio: "TAG Heuer Aquaracer 300M Calibre 16",
       sku: "CAY2110.BA0927",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39279/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39279/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39279/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39279/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39279/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39279/6.jpg"],
       valorAnunciado: "¥208.890 (R$6.830,70)",
-      custoFinal: null,
+      custoFinal: 9159.56,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1099,14 +1148,14 @@
       observacao: "<strong>Achado via busca por marca (09/08/2026).</strong> Automático, recém revisado (precisão +1s/dia). Caixa 48mm (dentro do perfil). Pulso de 19,5cm — bem próximo do alvo de 18,5cm. É o mais caro do lote. Estado Usado B. Ainda sem pesquisa de revenda.",
       alerta: "Falta confirmar se os elos são retos ou arredondados (cushion).",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "—",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/233905/58/59492/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233905/58/59492/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233905/58/59492/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233905/58/59492/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233905/58/59492/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233905/58/59492/6.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233905/58/59492/7.jpg"],
       valorAnunciado: "¥98.890 (R$3.233,70)",
-      custoFinal: null,
+      custoFinal: 4336.20,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1119,14 +1168,14 @@
       observacao: "<strong>Prova direta da falha de busca por modelo (09/08/2026):</strong> este anúncio não tem nenhum nome de modelo no título — só apareceu na busca pela marca sozinha (\"TAGHeuer\"), nenhuma busca por \"aquaracer\" ou \"fórmula 1\" o encontraria. Caixa 45mm (dentro do perfil). Pulso de 17,5cm — levemente abaixo do alvo de 18,5cm. Estado Usado B.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Pulso menor que o alvo é mais restritivo que pulso maior (não dá pra alongar) — falta confirmar se o fecho tem folga suficiente, e o formato dos elos.",
     },
-    {
+{
       relogio: "TAG Heuer Fórmula 1 (pulseira de borracha)",
       sku: "WAZ1110.FT8023",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/36889/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/36889/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/36889/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/36889/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/36889/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/36889/6.jpg"],
       valorAnunciado: "¥120.890 (R$3.953,10)",
-      custoFinal: null,
+      custoFinal: 5300.87,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1139,14 +1188,14 @@
       observacao: "<strong>Achado via busca por marca (09/08/2026).</strong> Único do lote com pulseira de borracha em vez de aço — a restrição de elos cushion não se aplica. Caixa 41mm (dentro do perfil). Estado Usado B.",
       alerta: "O anúncio não informa o comprimento do pulso. Pulseiras de borracha costumam ser ajustáveis, mas falta confirmar antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer Fórmula 1",
       sku: "CAZ1011",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37084/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37084/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37084/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37084/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37084/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37084/6.jpg"],
       valorAnunciado: "¥142.890 (R$4.672,50)",
-      custoFinal: null,
+      custoFinal: 6265.55,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1159,14 +1208,14 @@
       observacao: "<strong>Achado via busca por marca (09/08/2026).</strong> Único do lote que vem com caixa original. Caixa 48mm (dentro do perfil). Pulso de 20cm — acima do alvo, mas pulseira de aço costuma reduzir. Estado Usado B.",
       alerta: "Falta confirmar se a pulseira reduz até 18,5cm e se os elos são retos ou arredondados (cushion).",
     },
-    {
+{
       relogio: "TAG Heuer Professional 200",
       sku: "WG1130-0",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/233438/45/81052/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233438/45/81052/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233438/45/81052/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233438/45/81052/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233438/45/81052/5.jpg"],
       valorAnunciado: "¥43.890 (R$1.435,20)",
-      custoFinal: null,
+      custoFinal: 1924.52,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1179,14 +1228,14 @@
       observacao: "<strong>Achado na varredura completa por marca (09/08/2026), que corrigiu a lacuna de dados de pulso da rodada anterior.</strong> Caixa 41mm, pulso 17cm — dentro do perfil (caixa ≥38mm, pulso ≥17cm).<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "O site do 2nd Street bloqueou o acesso (Access Denied) durante a varredura, então não foi possível extrair foto. Confirmar formato dos elos da pulseira e estado real de conservação antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer Professional 200",
       sku: "WG1112-K0",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/233564/46/85107/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233564/46/85107/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233564/46/85107/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233564/46/85107/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233564/46/85107/5.jpg"],
       valorAnunciado: "¥38.390 (R$1.255,35)",
-      custoFinal: null,
+      custoFinal: 1683.35,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1199,14 +1248,14 @@
       observacao: "<strong>Achado na varredura completa por marca (09/08/2026).</strong> Caixa 41mm, pulso 17cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Sem foto (bloqueio temporário do site durante a varredura). Confirmar elos da pulseira e estado de conservação antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer Professional 2000",
       sku: "S95.713",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/232096/54/48456/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232096/54/48456/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232096/54/48456/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232096/54/48456/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232096/54/48456/5.jpg"],
       valorAnunciado: "¥38.390 (R$1.255,35)",
-      custoFinal: null,
+      custoFinal: 1683.35,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1219,14 +1268,14 @@
       observacao: "<strong>Achado na varredura completa por marca (09/08/2026).</strong> Caixa 38mm, pulso 19cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> reprovado manualmente por você através do botão Não aprovar no site.",
       alerta: "Sem foto (bloqueio temporário do site durante a varredura). Confirmar elos da pulseira e estado de conservação antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico, correia social/aftermarket)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/234780/17/27513/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234780/17/27513/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234780/17/27513/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234780/17/27513/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234780/17/27513/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234780/17/27513/6.jpg"],
       valorAnunciado: "¥32.890 (R$1.075,50)",
-      custoFinal: null,
+      custoFinal: 1442.19,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1239,14 +1288,14 @@
       observacao: "<strong>Achado na varredura completa por marca (09/08/2026).</strong> Caixa 38mm, pulso 18cm — dentro do perfil. Anúncio vem com correia social/aftermarket, não a pulseira original.",
       alerta: "Sem foto e sem referência legível no anúncio. Correia já é aftermarket, então a restrição de elos cushion não se aplica diretamente — mas confirmar estado geral antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer Fórmula 1",
       sku: "CAZ1112 (não confirmado)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39293/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39293/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39293/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39293/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39293/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/39293/6.jpg"],
       valorAnunciado: "¥142.890 (R$4.672,50)",
-      custoFinal: null,
+      custoFinal: 6265.55,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1259,14 +1308,14 @@
       observacao: "<strong>Achado na varredura completa por marca (09/08/2026).</strong> Caixa 41mm, pulso 19,5cm — dentro do perfil. Referência aproximada a partir do texto do anúncio, não confirmada na página do produto.",
       alerta: "Referência não 100% confirmada e sem foto (bloqueio do site durante a varredura). Confirmar referência exata, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer Kirium",
       sku: "WL1112-0",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/234069/82/40400/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234069/82/40400/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234069/82/40400/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234069/82/40400/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234069/82/40400/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234069/82/40400/6.jpg"],
       valorAnunciado: "¥65.890 (R$2.154,60)",
-      custoFinal: null,
+      custoFinal: 2889.19,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1279,14 +1328,14 @@
       observacao: "<strong>Achado na varredura completa por marca (09/08/2026).</strong> Caixa 41mm, pulso 19cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> Carrera/Kirium saíram dos modelos-alvo (decisão do usuário), então este item não faz mais parte do perfil de compra, independente da pulseira.",
       alerta: "Sem foto (bloqueio temporário do site durante a varredura). Confirmar elos da pulseira e estado de conservação antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer Carrera",
       sku: "Não informado (anúncio genérico, automático)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37749/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37749/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37749/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37749/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37749/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37749/6.jpg"],
       valorAnunciado: "¥219.890 (R$7.190,40)",
-      custoFinal: null,
+      custoFinal: 9641.90,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1299,14 +1348,14 @@
       observacao: "<strong>Achado na varredura completa por marca (09/08/2026).</strong> Caixa 41mm, pulso 19cm — dentro do perfil. Preço mais alto do lote, maior risco de capital.<br><br><strong>Reclassificado em 09/08/2026:</strong> Carrera/Kirium saíram dos modelos-alvo (decisão do usuário), então este item não faz mais parte do perfil de compra, independente da pulseira.",
       alerta: "Sem referência legível e sem foto (bloqueio do site durante a varredura). Confirmar referência, elos da pulseira e estado antes de decidir — capital em risco é maior nesse preço.",
     },
-    {
+{
       relogio: "TAG Heuer Aquaracer",
       sku: "WBP1110",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37626/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37626/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37626/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37626/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/37626/5.jpg"],
       valorAnunciado: "¥219.890 (R$7.190,40)",
-      custoFinal: null,
+      custoFinal: 9641.90,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1319,14 +1368,14 @@
       observacao: "<strong>Achado na varredura completa por marca (09/08/2026).</strong> Caixa 45mm, pulso 18,5cm — dentro do perfil.",
       alerta: "Sem foto (bloqueio temporário do site durante a varredura). Confirmar elos da pulseira e estado de conservação antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/233542/28/38671/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233542/28/38671/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233542/28/38671/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233542/28/38671/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233542/28/38671/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233542/28/38671/6.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233542/28/38671/7.jpg"],
       valorAnunciado: "¥32.890 (R$1.075,50)",
-      custoFinal: null,
+      custoFinal: 1442.19,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1339,14 +1388,14 @@
       observacao: "<strong>Achado na varredura completa por marca (09/08/2026).</strong> Caixa 36mm, pulso 17,5cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Sem referência legível e sem foto (bloqueio do site durante a varredura). Confirmar modelo exato, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer 2000 Series",
       sku: "WT1110",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/233948/54/19921/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233948/54/19921/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233948/54/19921/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233948/54/19921/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233948/54/19921/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233948/54/19921/6.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233948/54/19921/7.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233948/54/19921/8.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233948/54/19921/9.jpg"],
       valorAnunciado: "¥76.890 (R$2.514,30)",
-      custoFinal: null,
+      custoFinal: 3371.53,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1359,14 +1408,14 @@
       observacao: "<strong>Achado na varredura completa por marca (09/08/2026).</strong> Caixa 44mm, pulso 17cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Sem foto (bloqueio temporário do site durante a varredura). Confirmar elos da pulseira e estado de conservação antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/35486/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/35486/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/35486/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/35486/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/35486/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/35486/6.jpg"],
       valorAnunciado: "¥54.890 (R$1.794,90)",
-      custoFinal: null,
+      custoFinal: 2406.86,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1379,14 +1428,14 @@
       observacao: "<strong>Achado na varredura completa por marca (09/08/2026).</strong> Caixa 41mm, pulso 20cm — dentro do perfil (acima do alvo, mas pulseira de aço costuma reduzir).<br><br><strong>Reclassificado em 09/08/2026:</strong> reprovado manualmente por você através do botão Não aprovar no site.",
       alerta: "Sem referência legível e sem foto (bloqueio do site durante a varredura). Confirmar modelo exato, elos da pulseira e se reduz até 18,5cm antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer Professional 2000",
       sku: "S99.013",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/233972/34/93805/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233972/34/93805/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233972/34/93805/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233972/34/93805/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233972/34/93805/5.jpg"],
       valorAnunciado: "¥43.890 (R$1.435,20)",
-      custoFinal: null,
+      custoFinal: 1924.52,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1399,14 +1448,14 @@
       observacao: "<strong>Achado na varredura completa por marca (09/08/2026).</strong> Caixa 33mm, pulso 17cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Sem foto (bloqueio temporário do site durante a varredura). Confirmar elos da pulseira e estado de conservação antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (automático, modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/234067/40/95048/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234067/40/95048/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234067/40/95048/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234067/40/95048/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234067/40/95048/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234067/40/95048/6.jpg"],
       valorAnunciado: "¥186.890 (R$6.111,30)",
-      custoFinal: null,
+      custoFinal: 8194.89,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1419,14 +1468,14 @@
       observacao: "<strong>Achado na varredura completa por marca (09/08/2026).</strong> Caixa 41mm, pulso 17,5cm — dentro do perfil. Preço alto do lote, maior risco de capital.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Sem referência legível e sem foto (bloqueio do site durante a varredura). Confirmar referência, elos da pulseira e estado antes de decidir — capital em risco é maior nesse preço.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/34908/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/34908/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/34908/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/34908/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/34908/5.jpg"],
       valorAnunciado: "¥98.890 (R$3.233,70)",
-      custoFinal: null,
+      custoFinal: 4336.20,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1439,14 +1488,14 @@
       observacao: "<strong>Achado na varredura completa por marca (09/08/2026).</strong> Caixa 42mm, pulso 17cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Sem referência legível e sem foto (bloqueio do site durante a varredura). Confirmar modelo exato, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/234844/18/39581/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234844/18/39581/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234844/18/39581/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234844/18/39581/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234844/18/39581/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234844/18/39581/6.jpg"],
       valorAnunciado: "¥43.890 (R$1.435,20)",
-      custoFinal: null,
+      custoFinal: 1924.52,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1459,14 +1508,14 @@
       observacao: "<strong>Achado na varredura completa por marca (09/08/2026).</strong> Caixa 48mm, pulso 17,5cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Sem referência legível e sem foto (bloqueio do site durante a varredura). Confirmar modelo exato, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer 2000 Series",
       sku: "WT1213 (não confirmado)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/234341/46/51412/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234341/46/51412/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234341/46/51412/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234341/46/51412/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234341/46/51412/5.jpg"],
       valorAnunciado: "¥65.890 (R$2.154,60)",
-      custoFinal: null,
+      custoFinal: 2889.19,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1479,14 +1528,14 @@
       observacao: "<strong>Achado na varredura completa por marca (09/08/2026).</strong> Caixa 41mm, pulso 17,5cm — dentro do perfil. Referência aproximada a partir do texto do anúncio, não confirmada na página do produto.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Referência não 100% confirmada e sem foto (bloqueio do site durante a varredura). Confirmar referência exata, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/232062/64/95195/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232062/64/95195/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232062/64/95195/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232062/64/95195/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232062/64/95195/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232062/64/95195/6.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232062/64/95195/7.jpg"],
       valorAnunciado: "¥30.690 (R$1.003,56)",
-      custoFinal: null,
+      custoFinal: 1345.72,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1499,14 +1548,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026), concluindo os candidatos deixados pendentes por bloqueio temporário do site.</strong> Caixa 42mm, pulso 17,5cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Sem referência legível e sem foto. Confirmar modelo exato, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/231998/68/82172/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231998/68/82172/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231998/68/82172/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231998/68/82172/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231998/68/82172/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231998/68/82172/6.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231998/68/82172/7.jpg"],
       valorAnunciado: "¥30.690 (R$1.003,56)",
-      custoFinal: null,
+      custoFinal: 1345.72,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1519,14 +1568,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 38mm, pulso 18,5cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> reprovado manualmente por você através do botão Não aprovar no site.",
       alerta: "Sem referência legível e sem foto. Confirmar modelo exato, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer Professional 200",
       sku: "WG1120-KO",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/234429/26/32401/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234429/26/32401/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234429/26/32401/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234429/26/32401/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234429/26/32401/5.jpg"],
       valorAnunciado: "¥49.390 (R$1.615,05)",
-      custoFinal: null,
+      custoFinal: 2165.69,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1539,14 +1588,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 41mm, pulso 18cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> reprovado manualmente por você através do botão Não aprovar no site.",
       alerta: "Sem foto. Confirmar elos da pulseira e estado de conservação antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23506/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23506/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23506/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23506/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23506/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23506/6.jpg"],
       valorAnunciado: "¥142.890 (R$4.672,50)",
-      custoFinal: null,
+      custoFinal: 6265.55,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1559,14 +1608,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 46mm, pulso 19cm — dentro do perfil.",
       alerta: "Sem referência legível e sem foto. Confirmar modelo exato, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/231986/82/46474/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231986/82/46474/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231986/82/46474/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231986/82/46474/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231986/82/46474/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231986/82/46474/6.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231986/82/46474/7.jpg"],
       valorAnunciado: "¥153.890 (R$5.032,20)",
-      custoFinal: null,
+      custoFinal: 6747.88,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1579,14 +1628,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 48mm, pulso 18cm — dentro do perfil.",
       alerta: "Sem referência legível e sem foto. Confirmar modelo exato, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23049/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23049/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23049/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23049/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23049/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23049/6.jpg"],
       valorAnunciado: "¥281.490 (R$9.204,72)",
-      custoFinal: null,
+      custoFinal: 12342.98,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1599,14 +1648,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 45mm, pulso 20cm — dentro do perfil. Preço mais alto de todo o lote — maior risco de capital.",
       alerta: "Sem referência legível e sem foto. Preço alto (¥281.490) exige mais confiança antes de comprar — confirmar modelo exato, elos da pulseira e estado de conservação.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23636/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23636/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23636/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23636/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/23636/5.jpg"],
       valorAnunciado: "¥219.890 (R$7.190,40)",
-      custoFinal: null,
+      custoFinal: 9641.90,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1619,14 +1668,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 47mm, pulso 20cm — dentro do perfil.",
       alerta: "Sem referência legível e sem foto. Preço alto exige mais confiança antes de comprar — confirmar modelo exato, elos da pulseira e estado.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/233489/38/13897/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233489/38/13897/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233489/38/13897/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233489/38/13897/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233489/38/13897/5.jpg"],
       valorAnunciado: "¥98.890 (R$3.233,70)",
-      custoFinal: null,
+      custoFinal: 4336.20,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1639,14 +1688,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 34mm, pulso 18cm — dentro do perfil.",
       alerta: "Sem referência legível e sem foto. Confirmar modelo exato, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/21243/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/21243/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/21243/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/21243/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/21243/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/21243/6.jpg"],
       valorAnunciado: "¥142.890 (R$4.672,50)",
-      custoFinal: null,
+      custoFinal: 6265.55,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1659,14 +1708,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 33mm, pulso 19cm — dentro do perfil.",
       alerta: "Sem referência legível e sem foto. Confirmar modelo exato, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/20949/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/20949/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/20949/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/20949/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/20949/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/20949/6.jpg"],
       valorAnunciado: "¥142.989 (R$4.675,74)",
-      custoFinal: null,
+      custoFinal: 6269.89,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1679,14 +1728,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 48mm, pulso 21cm — dentro do perfil (bem acima do alvo, mas pulseira de aço costuma reduzir).",
       alerta: "Sem referência legível e sem foto. Confirmar modelo exato, se a pulseira reduz até 18,5cm e elos antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/232766/49/35539/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232766/49/35539/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232766/49/35539/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232766/49/35539/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232766/49/35539/5.jpg"],
       valorAnunciado: "¥98.890 (R$3.233,70)",
-      custoFinal: null,
+      custoFinal: 4336.20,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1699,14 +1748,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 47mm, pulso 17,5cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Sem referência legível e sem foto. Confirmar modelo exato, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/234306/23/68991/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234306/23/68991/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234306/23/68991/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234306/23/68991/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234306/23/68991/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234306/23/68991/6.jpg"],
       valorAnunciado: "¥49.390 (R$1.615,05)",
-      custoFinal: null,
+      custoFinal: 2165.69,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1719,14 +1768,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 41mm, pulso 17cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Sem referência legível e sem foto. Confirmar modelo exato, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer Aquaracer (referência aproximada, não confirmada)",
       sku: "WAP1111",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/232938/59/47754/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232938/59/47754/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232938/59/47754/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232938/59/47754/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232938/59/47754/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/232938/59/47754/6.jpg"],
       valorAnunciado: "¥93.390 (R$3.053,85)",
-      custoFinal: null,
+      custoFinal: 4095.03,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1739,14 +1788,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 44mm, pulso 17cm — dentro do perfil. Referência aproximada a partir do texto do anúncio, não confirmada na página do produto.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Referência não 100% confirmada e sem foto. Confirmar referência exata, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/234280/27/47997/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234280/27/47997/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234280/27/47997/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234280/27/47997/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234280/27/47997/5.jpg"],
       valorAnunciado: "¥54.890 (R$1.794,90)",
-      custoFinal: null,
+      custoFinal: 2406.86,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1759,14 +1808,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 38mm, pulso 17,5cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Sem referência legível e sem foto. Confirmar modelo exato, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/234205/46/81339/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234205/46/81339/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234205/46/81339/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234205/46/81339/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234205/46/81339/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234205/46/81339/6.jpg"],
       valorAnunciado: "¥32.890 (R$1.075,50)",
-      custoFinal: null,
+      custoFinal: 1442.19,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1779,14 +1828,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 42mm, pulso 17cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Sem referência legível e sem foto. Confirmar modelo exato, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer Carrera (referência aproximada, não confirmada)",
       sku: "CAF101x (não confirmado)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/15457/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/15457/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/15457/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/15457/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/15457/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/239998/22/15457/6.jpg"],
       valorAnunciado: "¥109.890 (R$3.593,40)",
-      custoFinal: null,
+      custoFinal: 4818.54,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1799,14 +1848,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 43mm, pulso 18cm — dentro do perfil. Referência aproximada a partir do texto do anúncio, não confirmada na página do produto.<br><br><strong>Reclassificado em 09/08/2026:</strong> Carrera/Kirium saíram dos modelos-alvo (decisão do usuário), então este item não faz mais parte do perfil de compra, independente da pulseira.",
       alerta: "Referência não 100% confirmada e sem foto. Confirmar referência exata, elos da pulseira e estado antes de decidir.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/234242/28/54549/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234242/28/54549/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234242/28/54549/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234242/28/54549/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234242/28/54549/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/234242/28/54549/6.jpg"],
       valorAnunciado: "¥196.900 (R$6.438,63)",
-      custoFinal: null,
+      custoFinal: 8633.82,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1819,14 +1868,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 44mm, pulso 17cm — dentro do perfil. Preço alto do lote, maior risco de capital.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Sem referência legível e sem foto. Preço alto exige mais confiança antes de comprar — confirmar modelo exato, elos da pulseira e estado.",
     },
-    {
+{
       relogio: "TAG Heuer (modelo não identificado no título)",
       sku: "Não informado (anúncio genérico)",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/231947/35/09148/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231947/35/09148/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231947/35/09148/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231947/35/09148/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231947/35/09148/5.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/231947/35/09148/6.jpg"],
       valorAnunciado: "¥219.890 (R$7.190,40)",
-      custoFinal: null,
+      custoFinal: 9641.90,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1839,14 +1888,14 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026).</strong> Caixa 47mm, pulso 17,5cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Sem referência legível e sem foto. Preço alto exige mais confiança antes de comprar — confirmar modelo exato, elos da pulseira e estado.",
     },
-    {
+{
       relogio: "TAG Heuer Professional 200",
       sku: "WG1220-K0",
       dataIdentificacao: "2026-08-09",
       fonte: "2nd Street Japão",
       imagens: ["https://cdn2.2ndstreet.jp/img/pc/goods/233431/34/66931/1.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233431/34/66931/2.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233431/34/66931/3.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233431/34/66931/4.jpg", "https://cdn2.2ndstreet.jp/img/pc/goods/233431/34/66931/5.jpg"],
       valorAnunciado: "¥32.890 (R$1.075,50)",
-      custoFinal: null,
+      custoFinal: 1442.19,
       potencialRevenda: null,
       margemR: null,
       margemPct: null,
@@ -1859,7 +1908,7 @@
       observacao: "<strong>Achado na segunda etapa da varredura completa por marca (09/08/2026), concluindo a varredura completa do lote de 118 anúncios TAG Heuer.</strong> Caixa 38mm, pulso 17cm — dentro do perfil.<br><br><strong>Reclassificado em 09/08/2026:</strong> o critério mínimo de pulseira subiu de 17cm para 18cm, e este anúncio está abaixo do novo corte.",
       alerta: "Sem foto. Confirmar elos da pulseira e estado de conservação antes de decidir.",
     },
-    {
+{
       relogio: "Omega x Swatch MoonSwatch Mission to Earth",
       dataIdentificacao: "2026-08-06",
       fonte: "OLX Brasil",
@@ -1877,8 +1926,8 @@
       link: "https://rj.olx.com.br/rio-de-janeiro-e-regiao/eletronicos-e-celulares/smartwatches/swatch-x-omega-relogio-bioceramic-moonswatch-mission-to-earth-1521231638",
       observacao: "Encontrado via busca no OLX filtrada pela faixa de preço R$1.500–2.200 (regra: abaixo de R$1.500 é muito provavelmente réplica). Vendedor \"Especialista\" na OLX desde 2015, nota 5,0 (42 avaliações), 56 vendas concluídas / 2 canceladas, identidade/e-mail/telefone/Facebook verificados. Anúncio descreve como Original, com caixa, manual e certificado — apenas sem a pulseira original. Potencial de revenda conservador de R$3.200 com base nos genuínos observados no mercado (R$3.200–3.500).",
       alerta: "A mesma busca trouxe outros 2 anúncios na faixa de preço que foram <strong>descartados por sinais de alerta</strong>: um em São Paulo (R$1.899) com categoria/marca incorretas no anúncio e vendedor de uma loja de alianças sem avaliações; outro em Lagoa Santa/MG (R$1.999) com conta criada em jul/2025 e nota 1,0 (2 avaliações).",
-    },
-  ];
+    }
+];
 
   // ---- DATA (Perfil de Compra & Regras — consolidado a partir das conversas com João) ----
   const perfilCompra = [
@@ -2154,12 +2203,74 @@
     `).join("");
   }
 
+  // ---- Filtros da grade de Oportunidades (Pesquisa de Mercado) ----
+  const oppFiltro = { decisao: "todas", precoMax: null, busca: "", ordenar: "recentes" };
+
+  function aplicarFiltrosOportunidades(ativas) {
+    let lista = ativas.slice();
+    if (oppFiltro.decisao === "prontas") {
+      lista = lista.filter(o => o.decisao === "comprar");
+    } else if (oppFiltro.decisao === "confirmar") {
+      lista = lista.filter(o => o.decisao === "confirmar");
+    }
+    if (oppFiltro.precoMax != null && !isNaN(oppFiltro.precoMax)) {
+      lista = lista.filter(o => o.custoFinal != null && o.custoFinal <= oppFiltro.precoMax);
+    }
+    if (oppFiltro.busca) {
+      const q = oppFiltro.busca.toLowerCase();
+      lista = lista.filter(o =>
+        (o.relogio || "").toLowerCase().includes(q) ||
+        (o.sku || "").toLowerCase().includes(q) ||
+        (o.fonte || "").toLowerCase().includes(q)
+      );
+    }
+    if (oppFiltro.ordenar === "preco-asc") {
+      lista.sort((a, b) => (a.custoFinal ?? Infinity) - (b.custoFinal ?? Infinity));
+    } else if (oppFiltro.ordenar === "preco-desc") {
+      lista.sort((a, b) => (b.custoFinal ?? -Infinity) - (a.custoFinal ?? -Infinity));
+    } else if (oppFiltro.ordenar === "margem-desc") {
+      lista.sort((a, b) => (b.margemPct ?? -Infinity) - (a.margemPct ?? -Infinity));
+    } else if (oppFiltro.ordenar === "nota-desc") {
+      lista.sort((a, b) => (b.nota ?? -Infinity) - (a.nota ?? -Infinity));
+    }
+    return lista;
+  }
+
+  function initFiltrosOportunidades() {
+    const decisaoEl = document.getElementById("filtroDecisao");
+    const precoEl = document.getElementById("filtroPrecoMax");
+    const buscaEl = document.getElementById("filtroBusca");
+    const ordenarEl = document.getElementById("filtroOrdenar");
+    const limparEl = document.getElementById("filtroLimpar");
+    if (!decisaoEl) return; // painel ainda não renderizado
+    decisaoEl.addEventListener("change", () => { oppFiltro.decisao = decisaoEl.value; renderOportunidades(); });
+    precoEl.addEventListener("input", () => {
+      const v = precoEl.value.trim();
+      oppFiltro.precoMax = v === "" ? null : Number(v);
+      renderOportunidades();
+    });
+    buscaEl.addEventListener("input", () => { oppFiltro.busca = buscaEl.value.trim(); renderOportunidades(); });
+    ordenarEl.addEventListener("change", () => { oppFiltro.ordenar = ordenarEl.value; renderOportunidades(); });
+    limparEl.addEventListener("click", () => {
+      oppFiltro.decisao = "todas"; oppFiltro.precoMax = null; oppFiltro.busca = ""; oppFiltro.ordenar = "recentes";
+      decisaoEl.value = "todas"; precoEl.value = ""; buscaEl.value = ""; ordenarEl.value = "recentes";
+      renderOportunidades();
+    });
+  }
+
   function renderOportunidades() {
     const grid = document.getElementById("oportunidadesGrid");
     if (!grid) return;
     const ativas = oportunidadesAtivas();
     renderOportunidadesSummary(ativas);
-    grid.innerHTML = ativas.map((o, idx) => {
+    const filtradas = aplicarFiltrosOportunidades(ativas);
+    const countEl = document.getElementById("oportunidadesFiltroCount");
+    if (countEl) {
+      countEl.textContent = filtradas.length === ativas.length
+        ? `Mostrando todas as ${ativas.length} oportunidades ativas`
+        : `Mostrando ${filtradas.length} de ${ativas.length} oportunidades ativas`;
+    }
+    grid.innerHTML = filtradas.map((o, idx) => {
       const imagens = Array.isArray(o.imagens) ? o.imagens : [];
       const id = oportunidadeId(o);
       const idAttr = encodeURIComponent(id);
@@ -2180,9 +2291,9 @@
           <div class="fonte">${o.sku ? `<span class="opp-sku">SKU ${o.sku}</span> · ` : ""}${o.fonte} · ${o.valorAnunciado}${idadeLabel(o.dataIdentificacao) ? ` · <span class="opp-idade">${idadeLabel(o.dataIdentificacao)}</span>` : ""}</div>
           ${o.custoFinal !== null ? `
             <div class="price-row">
-              <div class="pr-item"><span class="pr-label">Custo Final Est.</span><span class="pr-value">${fmtBRL(o.custoFinal)}</span></div>
-              <div class="pr-item"><span class="pr-label">Potencial Revenda</span><span class="pr-value">${fmtBRL(o.potencialRevenda)}</span></div>
-              <div class="pr-item"><span class="pr-label">Margem Est.</span><span class="pr-value opp-margem">${fmtBRL(o.margemR)} (${o.margemPct.toFixed(1).replace(".", ",")}%)</span></div>
+              <div class="pr-item"><span class="pr-label">Preço Final Estimado (BR)</span><span class="pr-value">${fmtBRL(o.custoFinal)}</span></div>
+              <div class="pr-item"><span class="pr-label">Potencial Revenda</span><span class="pr-value">${o.potencialRevenda !== null ? fmtBRL(o.potencialRevenda) : "—"}</span></div>
+              <div class="pr-item"><span class="pr-label">Margem Est.</span><span class="pr-value${(o.margemR !== null && o.margemPct !== null) ? " opp-margem" : ""}">${(o.margemR !== null && o.margemPct !== null) ? `${fmtBRL(o.margemR)} (${o.margemPct.toFixed(1).replace(".", ",")}%)` : "pendente"}</span></div>
             </div>
           ` : ""}
           ${o.nota != null ? `
@@ -2209,7 +2320,7 @@
       </div>
     `;
     }).join("");
-    window.__oportunidadesAtivas = ativas;
+    window.__oportunidadesAtivas = filtradas;
   }
 
   // ---- Lightbox / galeria de fotos ----
@@ -2475,6 +2586,7 @@
   renderPipeline();
   renderPerfilCompra();
   renderMetodologia();
+  initFiltrosOportunidades();
   renderOportunidades();
   renderMercadoBR();
   renderMonitorados();

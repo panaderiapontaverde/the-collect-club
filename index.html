@@ -677,6 +677,7 @@
   <button data-tab="estoque">Estoque</button>
   <button data-tab="pesquisa">Pesquisa de Mercado</button>
   <button data-tab="vendas">Vendas</button>
+  <button data-tab="instagram">Instagram</button>
 </nav>
 
 <main>
@@ -844,6 +845,13 @@
         <p>Aqui vão entrar os contatos e negociações em andamento do OLX e Instagram — quem demonstrou interesse, em que etapa está e o valor negociado.</p>
       </div>
     </div>
+  </section>
+
+  <!-- INSTAGRAM -->
+  <section class="panel" id="panel-instagram">
+    <h2 class="section-title">Instagram — Análise de Concorrentes</h2>
+    <p class="section-note">Snapshot manual dos concorrentes que a @thecollectorclub.br segue no Instagram. Não é um feed ao vivo — é atualizado periodicamente (não diariamente) conforme revisitamos os perfis. Foco em contas que efetivamente vendem relógio (contas de conteúdo/mídia, tipo ClockHub, ficam de fora por ora).</p>
+    <div class="market-grid" id="concorrentesInstagramGrid"></div>
   </section>
 
 </main>
@@ -2238,6 +2246,55 @@
     },
   ];
 
+  // ---- DATA (snapshot manual de análise de concorrentes no Instagram) ----
+  // Atualizado manualmente ao revisitar os perfis — não é um feed ao vivo.
+  const concorrentesInstagram = [
+    {
+      conta: "@relogiosdoleo",
+      nome: "Relógios do Léo",
+      seguidores: 6809,
+      especialidade: "TAG Heuer & Rolex vintage selecionados para colecionadores",
+      overlap: "Alto — é o concorrente mais parecido com a gente (mesmo nicho TAG Heuer vintage)",
+      comoDivulgaPreco: "Direto na foto do destaque \"Disponíveis\" (ex.: \"24.9k — No PIX ou 12x com taxas\")",
+      exemploRecente: "TAG Heuer Autavia 2017 Full Set, Calibre Heuer 02, 42mm — R$24.900 (PIX ou 12x c/ taxas)",
+      dataChecagem: "09/08/2026",
+      observacoes: "Estrutura de destaques fixos (Disponíveis / Vendidos / Feedbacks / ROLEX / Revisão) é um modelo bom pra copiar no nosso próprio perfil.",
+    },
+    {
+      conta: "@vintagetimebr",
+      nome: "Vintage Time BR",
+      seguidores: 47200,
+      especialidade: "Curadoria e venda de relógios de luxo vintage & novos (predominantemente Rolex)",
+      overlap: "Médio — ticket médio bem acima do nosso (Rolex), mas mesmo público-alvo colecionador",
+      comoDivulgaPreco: "Direto na foto, com ficha técnica sobreposta (referência, ano, full set, revisão) e preço no rodapé",
+      exemploRecente: "Rolex Submariner Date ref. 16610, full set, revisado na Rolex em 2023, ano 1996 — R$63.900 (PIX ou 12x c/ taxas)",
+      dataChecagem: "09/08/2026",
+      observacoes: "Conta grande e profissional (47,2 mil seguidores, 1.806 posts, comunidade exclusiva via link). Ótima referência de apresentação/fotografia, mesmo não sendo benchmark direto de preço pro nosso catálogo.",
+    },
+    {
+      conta: "@wendwatches",
+      nome: "Wend Watches",
+      seguidores: 12800,
+      especialidade: "Luxo original diverso — Cartier, Omega, Tudor, entre outros",
+      overlap: "Médio — vende ocasionalmente peças do nosso perfil, mas catálogo é mais amplo que o nosso",
+      comoDivulgaPreco: "Não identificado nos posts públicos vistos até agora — precisa checar destaques/stories com mais calma",
+      exemploRecente: null,
+      dataChecagem: "09/08/2026",
+      observacoes: "Vale revisitar os destaques \"Clientes\" e \"Comunidade\" numa próxima checagem pra confirmar se o preço aparece em algum lugar.",
+    },
+    {
+      conta: "@elitetimebh",
+      nome: "Elite Time BH",
+      seguidores: 25800,
+      especialidade: "Compra e venda de relógios de luxo, Belo Horizonte",
+      overlap: "Médio — mesmo formato de negócio (compra e revenda), catálogo mais amplo que o nosso",
+      comoDivulgaPreco: "Só por WhatsApp/DM — perfil linka direto pro contato, sem preço público nos posts vistos",
+      exemploRecente: null,
+      dataChecagem: "09/08/2026",
+      observacoes: "Mesma estrutura de destaques (Disponíveis / Vendidos) que a Relógios do Léo, mas sem preço público — mais difícil de usar como benchmark direto.",
+    },
+  ];
+
   // Aprovação/reprovação manual. "Não aprovar" tem dois efeitos:
   // 1) esconde o item na hora, neste navegador, via localStorage (feedback imediato);
   // 2) envia o link do item direto pro Google Formulário de reprovação em segundo plano
@@ -2669,6 +2726,26 @@
     `).join("");
   }
 
+  function renderConcorrentesInstagram() {
+    const grid = document.getElementById("concorrentesInstagramGrid");
+    if (!grid) return;
+    grid.innerHTML = concorrentesInstagram.map(c => `
+      <div class="market-card">
+        <div class="mk-head">
+          <h4>${c.nome} <span style="font-weight:400;">(${c.conta})</span></h4>
+          <span class="mk-source">${c.seguidores.toLocaleString("pt-BR")} seguidores · checado em ${c.dataChecagem}</span>
+        </div>
+        <div class="mk-note">
+          <strong>Especialidade:</strong> ${c.especialidade}<br>
+          <strong>Overlap com nosso catálogo:</strong> ${c.overlap}<br>
+          <strong>Como divulgam preço:</strong> ${c.comoDivulgaPreco}<br>
+          ${c.exemploRecente ? `<strong>Exemplo recente:</strong> ${c.exemploRecente}<br>` : ""}
+          ${c.observacoes}
+        </div>
+      </div>
+    `).join("");
+  }
+
   function renderEstoque() {
     const emEstoque = relogios.filter(r => r.status !== "Vendido");
     const card = document.getElementById("estoqueCard");
@@ -2750,6 +2827,7 @@
   renderOportunidades();
   renderMercadoBR();
   renderMonitorados();
+  renderConcorrentesInstagram();
 
   // ---- TABS ----
   document.getElementById("tabNav").addEventListener("click", (e) => {
